@@ -1,0 +1,76 @@
+Zenefits: Can Win the Game 
+
+
+
+Given array of whole numbers and a starting index, find out if you can win
+Winning means ending up at an array value of 0.
+
+If you are at a position that has a value that is not a 0, you can move value times to the left or to the right
+[1, 3, 0, 2, 2], i == 0 -> true
+[1, 1], i == 1 -> false.
+
+ 
+Understand the problem:
+The problem can be solved by using DFS because it s a search problem. We can start from the index and try to move to left and right to the nums[i] steps. If we can find out a index with number 0, we return true. In order to avoid the dead loops, we need to mark the array members we have already visited. If we visited a already visited array element, it will start endless loop. 
+
+ Code (Java):
+import java.util.*;
+public class Solution {
+    public boolean canWin(int[] nums, int index) {
+        if (nums == null || nums.length == 0 || index < 0 || index >= nums.length) {
+            return false;
+        }
+         
+        boolean[] visited = new boolean[nums.length];
+         
+        return canWinHelper(nums, index, visited);
+    }
+     
+    private boolean canWinHelper(int[] nums, int index, boolean[] visited) {
+        if (index < 0 || index >= nums.length) {
+            return false;
+        }
+         
+        if (visited[index]) {
+            return false;
+        }
+         
+        if (nums[index] == 0) {
+            return true;
+        }
+         
+        visited[index] = true;
+         
+        int left = index - nums[index];
+        int right = index + nums[index];
+         
+        if (canWinHelper(nums, left, visited) || canWinHelper(nums, right, visited)) {
+            return true;
+        }
+         
+        visited[index] = false;
+         
+        return false;
+    }
+     
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] nums = new int[n];
+         
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+         
+        int index = scanner.nextInt();
+         
+        Solution solution = new Solution();
+        boolean result = solution.canWin(nums, index);
+         
+        System.out.println(result);
+         
+        scanner.close();
+    }
+}
+ 
+
