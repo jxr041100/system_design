@@ -1,0 +1,65 @@
+LinkedIn: Text file Iterable 
+
+
+
+http://blog.csdn.net/craiglin1992/article/details/44778643
+
+Question:Implement a (Java) Iterable object that iterates lines one by one from a text file..
+
+
+/** A reference to a file. */
+public class TextFile implements Iterable<String>
+{
+  public TextFile(String fileName) { // please implement this
+ 
+  /** Begin reading the file, line by line. 
+    * The returned Iterator.next() will return a line. 
+    */
+  @Override
+  public Iterator<String> iterator() { // please implement this
+ 
+
+
+Code(Java):
+
+import java.io.*;
+import java.util.*;
+ 
+/** A reference to a file. */
+public class TextFile implements Iterable<String> {
+    Scanner scanner;
+    public TextFile(String fileName) {
+        try {
+            scanner = new Scanner(new File(fileName));
+        } catch (Exception e) {
+             
+        }
+    }
+ 
+  /** Begin reading the file, line by line. 
+   *  The returned Iterator.next() will return a line. 
+   */
+    @Override
+    public Iterator<String> iterator() {
+        return new TextFileIterator();
+    }
+     
+    private class TextFileIterator implements Iterator<String> {
+        @Override
+        public boolean hasNext() {
+            return scanner.hasNext();
+        }
+         
+        @Override
+        public String next() {
+            return scanner.nextLine();
+        }
+         
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+}
+ 
+
