@@ -1,0 +1,172 @@
+Zenefits: Robert Merge Point 
+
+
+
+一个matrix, 1代表机器人，0代表通路，x代表路障，求到所有机器人距离和最小的一点
+需要注意的是机器人本身也是通路的一部分，可以通过他到达其他机器人，甚至最小点
+也可以和机器人在同一个点上。. from: 1point3acres.com/bbs 
+另外如果被路障围起来的点不能被算进来
+
+ 
+
+*//problem: robot merge point
+
+//input:
+
+//robot: 1
+
+//obstacle: X
+
+[
+
+0   0   0   M   1
+
+0   1   X   0   0
+
+0   X   0   0   0
+
+0   0   0   1   0
+
+0   0   0   0   0
+
+//output:
+
+//best merge point: M
+
+3 + 1 + 3 = 7
+. from: 1point3acres.com/bbs 
+
+Definition: Best merge point: minimal sum of path num between robots and merge point*/
+
+Solution:
+
+Note that this problem like mini distance can only be solved by using BFS, not DFS. 
+We need to handle when to mark the visited[][] as false. In this question, we simply that for each tracking, we define a new boolean[][ visited. 
+
+ Code (Java):
+import java.util.*;
+
+public class Solution {
+  public Point findTheBestMergePoint(char[][] matrix) {
+    if (matrix == null || matrix.length == 0) {
+      return null;
+    }
+    
+    int m = matrix.length;
+    int n = matrix[0].length;
+    
+    int[][] dist = new int[m][n];
+   
+    Queue<Integer> queue = new LinkedList<>();
+    // 0 open
+    // 1 robert
+    // X block
+    
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        if (matrix[i][j] == '1') {
+          boolean[][] visited = new boolean[m][n];
+          findTheBestMergePointHelper(i, j, matrix, dist, visited, 0, queue);
+        }
+      }
+    }
+    
+    // Step 2: find the shorest distance
+    Point result = new Point();
+    int minDist = Integer.MAX_VALUE;
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        // Skip the unreachable point
+        if ((dist[i][j] == 0 && matrix[i][j] == '0') || 
+            matrix[i][j] == 'X') {
+          continue;
+        }
+        
+        if (dist[i][j] < minDist) {
+          minDist = dist[i][j];
+          result.x = i;
+          result.y = j;
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  private void findTheBestMergePointHelper(int row, int col, char[][] matrix, 
+                                           int[][] dist, boolean[][] visited, 
+                                           int distance, Queue<Integer> queue) {
+    int m = matrix.length;
+    int n = matrix[0].length;
+    
+    fill(row, col, matrix, dist, visited, distance, queue);
+    
+    while (!queue.isEmpty()) {
+      int sz = queue.size();
+      for (int i = 0; i < sz; i++) {
+        int cord = queue.poll();
+        int x = cord / n;
+        int y = cord % n;
+        
+        fill(row - 1, col, matrix, dist, visited, distance + 1, queue);
+        fill(row + 1, col, matrix, dist, visited, distance + 1, queue);
+        fill(row, col - 1, matrix, dist, visited, distance + 1, queue);
+        fill(row, col + 1, matrix, dist, visited, distance + 1, queue);
+      }
+      
+      distance++;
+    }
+  }
+  
+  private void fill(int row, int col, char[][] matrix, 
+                    int[][] dist, boolean[][] visited,
+                    int distance, Queue<Integer> queue) {
+    int m = matrix.length;
+    int n = matrix[0].length;
+    
+    if (row < 0 || row >= m || col < 0 || col >= n) {
+      return;
+    }
+    
+    if (visited[row][col] || matrix[row][col] == 'X') {
+      return;
+    }
+    
+    visited[row][col] = true;
+    
+    dist[row][col] += distance;
+    
+    queue.offer(row * n + col);
+  }
+  
+  public static void main(String[] args) {
+    Solution solution = new Solution();
+    char[][] mat = {{'0', '0', '0', '0', '1'},
+                    {'0', '1', 'X', '0', '0'},
+                    {'0', 'X', '0', '0', '0'},
+                    {'0', '0', '0', '1', '0'},
+                    {'0', '0', '0', '0', '0'}
+                   };
+    
+    Point result = solution.findTheBestMergePoint(mat);
+    
+    System.out.println(result.x);
+    System.out.println(result.y);
+  }
+  
+  class Point {
+    int x;
+    int y;
+    
+    public Point(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+    
+    public Point() {
+      this.x = 0;
+      this.y = 0;
+    }
+  }
+}
+
