@@ -1,0 +1,112 @@
+转载：System design papers
+转载:http://fisherlei.blogspot.com/2014/10/codingtmds-reading-list_23.html
+
+Following reading list is selected from the papers I had read in the past 3 years. It will help you to gain a basic knowledge of what happened in current industry and bring you a little sense about how to design a distributed system with certain principles.
+
+Feel free to post the good paper you had read in the comments for sharing.:)
+
+Concurrency
+ In Search of an Understandable Consensus Algorithm.  Diego Ongaro, John Ousterhout, 2013
+  A Simple Totally Ordered Broadcast Protocol. Benjamin Reed, Flavio P. Junqueira,2008
+ Paxos Made Live - An Engineering Perspective. Tushar Deepak Chandra, Robert Griesemer, Joshua Redstone, 2007
+  The Chubby Lock Service for Loosely-Coupled Distributed Systems. Mike Burrows, 2006
+  Paxos Made Simple. Leslie Lamport, 2001
+  Impossibility of Distributed Consensus with One Faulty Process. Michael Fischer, Nancy Lynch, Michael Patterson, 1985
+ The Byzantine Generals Problem. Leslie Lamport, 1982
+  An Algorithm for Concurrency Control and Recovery in Replicated Distributed Databases. PA Bernstein, N Goodman, 1984
+  Wait-Free Synchronization. M Herlihy…, 1991
+ZooKeeper: Wait-free coordination for Internet-scale systems. P Hunt, M Konar, FP Junqueira, 2010
+
+Consistency
+Highly Available Transactions: Virtues and Limitations. Peter Bailis, Aaron Davidson, Alan Fekete, Ali Ghodsi, Joseph M. Hellerstein, Ion Stoica, 2013
+Consistency Tradeoffs in Modern Distributed Database System Design. Daniel J. Abadi, 2012
+CAP Twelve Years Later: How the “Rules” Have Changed. Eric Brewer, 2012
+Optimistic Replication. Yasushi Saito and Marc Shapiro, 2005
+Brewer’s Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services. Seth Gilbert, Nancy Lynch, 2002
+Harvest, Yield, and Scalable Tolerant Systems. Armando Fox, Eric A. Brewer, 1999
+Linearizability: A Correctness Condition for Concurrent Objects. Maurice P. Herlihy, Jeannette M. Wing, 1990
+Time, Clocks, and the Ordering of Events in a Distributed System. Leslie Lamport, 1978
+
+Conflict-free data structures
+ A Comprehensive Study of Convergent and Commutative Replicated Data Types. Mark Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski, 2011
+A Commutative Replicated Data Type For Cooperative Editing. Nuno Preguica, Joan Manuel Marques, Marc Shapiro, Mihai Letia, 2009
+CRDTs: Consistency without Concurrency Control. Mihai Letia, Nuno Preguiça, Marc Shapiro, 2009
+Conflict-free replicated data types. Marc Shapiro, Nuno Preguiça, Carlos Baquero, Marek Zawirski, 2011
+Designing a commutative replicated data type. Marc Shapiro, Nuno Preguiça, 2007
+Distributed programming
+ Logic and Lattices for Distributed Programming. Neil Conway, William Marczak, Peter Alvaro, Joseph M. Hellerstein, David Maier, 2012
+Dedalus: Datalog in Time and Space. Peter Alvaro, William R. Marczak, Neil Conway, Joseph M. Hellerstein, David Maier, Russell Sears, 2011
+MapReduce: Simplified Data Processing on Large Clusters. Jeffrey Dean, Sanjay Ghemawat, 2004
+A Note On Distributed Computing. Samuel C. Kendall, Jim Waldo, Ann Wollrath, Geoff Wyant, 1994
+An Overview of the Scala Programming Language. M Odersky, P Altherr, V Cremet, B Emir, S Man, 2004
+ Erlang. Joe Ar mstrong, 2010
+
+Systems
+Implemented and theoretical distributed systems.
+ A History of The Virtual Synchrony Replication Model. Ken Birman,  2010
+ Cassandra — A Decentralized Structured Storage System. Avinash Lakshman, Prashant Malik, 2009
+ Dynamo: Amazon’s Highly Available Key-Value Store. Giuseppe DeCandia, Deniz Hastorun, Madan Jampani, Gunavardhan Kakulapati, Avinash Lakshman, Alex Pilchin, Swaminathan Sivasubramanian, Peter Vosshall and Werner Vogels, 2007
+ Stasis: Flexible Transactional Storage. Russell Sears, Eric Brewer, 2006
+  Bigtable: A Distributed Storage System for Structured Data. Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, and Robert E. Gruber, 2006
+ The Google File System. Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung, 2003
+ Lessons from Giant-Scale Services. Eric A. Brewer, 2001
+ Towards Robust Distributed Systems. Eric A. Brewer, 2000
+ Cluster-Based Scalable Network Services. Armando Fox, Steven D. Gribble, Yatin Chawathe, Eric A. Brewer, Paul Gauthier, 1997
+The Process Group Approach to Reliable Distributed Computing. Ken Birman, 1993
+Bitcoin: A Peer-to-Peer Electronic Cash System.
+The Hadoop Distributed File System.  Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler, 2010
+Hive – A Petabyte Scale Data Warehouse Using Hadoop. A Thusoo, JS Sarma, N Jain, Z Shao, 2010
+Scalable Web Architecture and Distributed Systems.  Kate Matsudaira,
+Kafka: a Distributed Messaging System for Log Processing. J Kreps, N Narkhede, 2011
+Storm: Distributed and fault-tolerant real-time computation. Nathan Marz, 2012
+Spark: Cluster Computing withWorking Sets. M Zaharia, M Chowdhury, MJ Franklin…, 2010
+Flat Datacenter Storage.  EB Nightingale, J Elson, J Fan, OS Hofmann, J Howell…, 2012
+Ananta: Cloud Scale Load Balancing. P Patel, D Bansal, L Yuan, A Murthy…, 2013
+ F1 - The Fault-Tolerant Distributed RDBMS Supporting Google's Ad Business. Jeff Shute, Stephan Ellner…, 2012
+BigTable, Dynamo & Cassandra – A Review. A Kala Karun, S Surendran, 2012
+Windows Azure Storage: A Highly Available Cloud Storage Service with Strong Consistency.  B Calder, J Wang, A Ogus, N Nilakantan…, 2011
+
+Reliability
+  The Dangers of Replication and a Solution. J Gray, P Helland, P O'Neil, D Shasha - ACM SIGMOD Record, 1996
+
+Industry Implementation
+  Hadoop Architecture and its Usage at Facebook.  Dhruba Borthakur, 2009
+  WEB SEARCH FOR A PLANET: THE GOOGLE CLUSTER ARCHITECTURE. LA Barroso, J Dean, U Holzle - Micro, Ieee, 2003
+  HDFS scalability: the limits to growth. Konstantin V. Shvachko, 2010
+  Autopilot: Automatic Data Center Management.  Michael Isard, 2007
+  Storage Infrastructure behind Facebook Messages: Using HBase at Scale. AS Aiyer, M Bautin, GJ Chen, P Damania, 2012
+  Scaling Memcache at Facebook.  R Nishtala, H Fugal, S Grimm, M Kwiatkowski, 2013
+  Finding a needle in Haystack: Facebook’s photo storage. D Beaver, S Kumar, HC Li, J Sobel, P Vajge, 2010
+ Apache Hadoop Goes Realtime at Facebook. D Borthakur, J Gray, JS Sarma…, 2011
+  Data Warehousing and Analytics Infrastructure at Facebook.  A Thusoo, Z Shao, S Anthony, D Borthakur…, 2010
+Large Scale Computing @ Linkedin. Bhupesh Bansal, 2009
+An Analysis of Facebook Photo Caching. Q Huang, K Birman, R van Renesse, W Lloyd…, 2013
+The “Big Data” Ecosystem at LinkedIn. R Sumbaly, J Kreps, S Shah, 2013
+Data Infrastructure at LinkedIn. A Auradkar, C Botev, S Das…, 2012
+
+Language
+ Deep C (and C++) . Olve Maudal and Jon Jagger, 2011
+
+
+Others
+ColumnStores vs. RowStores: How Different Are They Really? DJ Abadi, SR Madden, N Hachem, 2008
+ Hadoop and its evolving ecosystem. J. Yates Monteith, John D. McGregor, and John E. Ingram
+Orleans: Cloud Computing for Everyone. S Bykov, A Geller, G Kliot, JR Larus, R Pandya, 2011
+Twitter Data Analytics.  Shamanth Kumar, Fred Morstatter, Huan Liu, 2013
+MapReduce is Good Enough? If All You Have is a Hammer, Throw Away Everything That’s Not a Nail!  Jimmy Lin, 2012
+
+Data Mining
+  Data Mining with Big Data. X Wu, X Zhu, GQ Wu, W Ding, 2014
+  SAMOA: A Platform for Mining Big Data Streams. G De Francisci Morales , 2013
+  Mining Big Data: Current Status, and Forecast to the Future. W Fan, A Bifet, 2013
+  Scaling Big Data Mining Infrastructure: The Twitter Experience. J Lin, D Ryaboy, 2013
+
+Books
+Cloud Design Pattern.
+Data Access For Highly scalable solutions.
+Computer Architecture - A Quantitative Approach.
+ DISTRIBUTED SYSTEMS - Concepts and Design.  Fifth Edition. George Coulouris
+Beautiful Architecture. Diomidis Spinellis, Georgios Gousios etc
+Mining Social Media: Tracking Content and Predicting Behavior. Manos Tsagkias
+ Seven Databases in Seven Weeks.  Eric Redmond and Jim R. Wilson
+Posted by Butter is looking for a job at 2:58 PM No comments: 
