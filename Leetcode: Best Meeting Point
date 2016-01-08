@@ -1,0 +1,64 @@
+Leetcode: Best Meeting Point 
+
+
+
+
+A group of two or more people wants to meet and minimize the total travel distance. You are given a 2D grid of values 0 or 1, where each 1 marks the home of someone in the group. The distance is calculated using Manhattan Distance, where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|.
+
+For example, given three people living at (0,0), (0,4), and (2,2):
+1 - 0 - 0 - 0 - 1
+|   |   |   |   |
+0 - 0 - 0 - 0 - 0
+|   |   |   |   |
+0 - 0 - 1 - 0 - 0
+
+The point (0,2) is an ideal meeting point, as the total travel distance of 2+2+2=6 is minimal. So return 6.
+
+Hint:
+1.Try to solve it in one dimension first. How can this solution apply to the two dimension case?
+Understand the problem:
+http://segmentfault.com/a/1190000003894693
+ 
+
+
+
+为了保证总长度最小，我们只要保证每条路径尽量不要重复就行了，比如1->2->3<-4这种一维的情况，如果起点是1，2和4，那2->3和1->2->3这两条路径就有重复了。为了尽量保证右边的点向左走，左边的点向右走，那我们就应该去这些点中间的点作为交点。由于是曼哈顿距离，我们可以分开计算横坐标和纵坐标，结果是一样的。所以我们算出各个横坐标到中点横坐标的距离，加上各个纵坐标到中点纵坐标的距离，就是结果了。
+Code (Java):
+public class Solution {
+    public int minTotalDistance(int[][] grid) {
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        List<Integer> rowIndex = new ArrayList<>();
+        List<Integer> colIndex = new ArrayList<>();
+        
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1) {
+                    rowIndex.add(i);
+                    colIndex.add(j);
+                }
+            }
+        }
+        
+        int sum = 0;
+        int mid = rowIndex.get(rowIndex.size() / 2);
+        for (int x : rowIndex) {
+            sum += Math.abs(x - mid);
+        }
+        
+        Collections.sort(colIndex);
+        mid = colIndex.get(colIndex.size() / 2);
+        
+        for (int y : colIndex) {
+            sum += Math.abs(y - mid);
+        }
+        
+        return sum;
+    }
+}
+
