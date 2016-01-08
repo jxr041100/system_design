@@ -1,0 +1,117 @@
+Zenefits: Longest Subsequence 
+
+
+
+/ Find the largest K such that A^K is a subsequence of B, where A, B are two strings. |A| << |B|.
+
+// Power of a string:
+// Let A = xyxz. Waral 鍗氬鏈夋洿澶氭枃绔�,
+// Then,
+// A^1 = A = xyxz
+// A^2 = xxyyxxzz
+// A^3 = xxxyyyxxxzzz
+. 1point 3acres 璁哄潧
+// Example:
+// A = xyxz. 1point 3acres 璁哄潧
+// B = xabyzxz
+. 鐗涗汉浜戦泦,涓€浜╀笁鍒嗗湴
+// B xaybyxzxxxzz
+
+// A xxyyxxzz
+
+Solution:
+The key of the problem is to find out the largest possible k, that the A^k is the subsequence of B. 
+
+ How to find out the maximum K. The easiest way is k = lenB / lenA. But that could result to a false larger K. 
+
+ A better approach is to calculate the frequency of each character in A and B. Then calculate the MIN(B[i] / A[i]).
+
+ Code (Java):
+ 
+import java.io.*;
+import java.util.*;
+ 
+class Solution {
+    public int findK(String A, String B) {
+        int len1 = A.length(), len2 = B.length();
+        if (len1 > len2) {
+            return 0;
+        }
+         
+        if (len1 <= 0) {
+          return 0;
+        }
+         
+        // remove space weird characters, capital to lower case etc if needed
+        A = preprocess(A);
+             
+        // find signature for each A and B and get the max possible value for k
+        int[] sigA = new int[256];
+        int[] sigB = new int[256];
+        for (int i = 0; i < len1; i++) {
+            sigA[A.charAt(i)]++;
+        }
+        for (int i = 0; i < len2; i++) {
+            sigB[B.charAt(i)]++;
+        }
+         
+        int kMax = Integer.MAX_VALUE;
+        for (int i = 0; i < len1; i++) {
+            if (sigA[A.charAt(i)] != 0) {
+                kMax = Math.min(sigB[A.charAt(i)] / sigA[A.charAt(i)], kMax);
+            }
+        }
+         
+        int lo = 0, hi = kMax;
+        int ret = 0;
+        while (lo <= hi) {
+            int med = lo + (hi - lo) / 2;
+            if (isSubSeq(expand(A, med), B)){
+                ret = med;
+                lo = med + 1;
+            } else {
+                hi = med - 1;
+            }
+        }
+        return ret;
+    }
+   
+    String expand(String A, int k){
+        StringBuilder sbuf = new StringBuilder();
+        for (int i = 0; i < A.length(); i++) {
+            char c = A.charAt(i);
+            for (int j = 0; j < k; j++) {
+                sbuf.append(c);
+            }
+        }
+        return sbuf.toString();
+    }
+         
+    boolean isSubSeq(String A, String B) {
+        int len1 = A.length(), len2 = B.length();
+        int a = 0, b = 0;
+        while (a < len1 && b < len2){
+            if (A.charAt(a) == B.charAt(b)){
+                a++;
+                b++;
+            } else {
+                b++;
+            }
+        }
+        return a == len1;
+    }
+         
+    String preprocess(String A){
+        return A.toLowerCase();
+    }
+ 
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        String A = "xyxz";
+        String B = "xabxyyzzxxxzz";
+         
+        int result = solution.findK(A, B);
+        System.out.println(result);
+    }
+}
+ 
