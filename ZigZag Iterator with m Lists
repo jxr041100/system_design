@@ -1,0 +1,78 @@
+Zenefits: ZigZag Iterator with m Lists 
+
+
+
+Given a List<Iterator<Integer>>, with m iterators of list. Each Iterator is an iterator of a List<Integer>. Implement a ZigZag Iterator which will iterate the 2D vector in column-major way. e.g. 
+[1, 2, 3]
+[5, 4]
+[6, 7, 8, 9]
+
+ Return 1, 5, 6, 2, 4, 7, 3, 8, 9
+
+ Solution:
+Use a queue to store the Iterator of each list. 
+
+ Code (Java):
+
+import java.util.*;
+ 
+public class Solution {
+  public static class ZigZagIterator {
+    private List<Iterator<Integer>> iterators;
+    private Queue<Iterator<Integer>> queue;
+     
+    public ZigZagIterator(List<Iterator<Integer>> iterators) {
+      this.iterators = iterators;
+      queue = new LinkedList<>();
+       
+      for (Iterator<Integer> iterator : iterators) {
+        if (iterator.hasNext()) {
+          queue.add(iterator);
+        }
+      }
+       
+    }
+     
+    public boolean hasNext() {
+      return !queue.isEmpty();
+    }
+     
+    public Integer next() {
+      Iterator<Integer> currIterator = queue.poll();
+      Integer result = currIterator.next();
+      if (currIterator.hasNext()) {
+        queue.offer(currIterator);
+      }
+       
+      return result;
+    }
+  }
+   
+  public static void main(String[] args) {
+    Integer[] arr1 = new Integer[]{1,2,3};
+    List<Integer> list1 = Arrays.asList(arr1);
+     
+    Integer[] arr2 = new Integer[]{5,4};
+    List<Integer> list2 = Arrays.asList(arr2);
+     
+    Integer[] arr3 = new Integer[]{6,7,8,9};
+    List<Integer> list3 = Arrays.asList(arr3);
+     
+    List<Iterator<Integer>> iterators = new ArrayList<>();
+    iterators.add(list1.iterator());
+    iterators.add(list2.iterator());
+    iterators.add(list3.iterator());
+     
+    Solution.ZigZagIterator zigZagIterator = new Solution.ZigZagIterator(iterators);
+     
+    while (zigZagIterator.hasNext()) {
+      System.out.println(zigZagIterator.next());
+    }
+  }
+}
+ 
+
+ Follow-up:
+如果Iterator 有 prev() 和 hasPrev() 接口，实现ZigZagIterator 的prev(), hasPrev().
+Solution:
+Use deque +Stack.  
