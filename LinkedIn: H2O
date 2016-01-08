@@ -1,0 +1,52 @@
+LinkedIn: H2O 
+
+
+
+实现两个函数: H() and O(), 这两个函数会被多线程调用。当一个线程调用H或O时
+，如果当前已经有至少两个线程call H和一个线程call O。那么让两个call H和一个
+call O的线程返回（产生一个水分子），其他的都block。
+
+ Code (Java):
+
+public class H2O {
+ 
+    static final Lock LOCK = new ReentrantLock();
+    static final Condition ENOUGH_H = LOCK.newCondition();
+    static final Condition ENOUGH_O = LOCK.newCondition();
+    static int H = 0;
+    static int O = 0;
+ 
+    static void check() {
+        if (H >= 2 && O >= 1) {
+            ENOUGH_H.signal();
+            ENOUGH_H.signal();
+            ENOUGH_O.signal();
+            H -= 2;
+            O -= 1;
+        }
+    }
+ 
+    public static void h() {
+        LOCK.lock();
+        try {
+            check();
+            ++H;
+            ENOUGH_H.awaitUninterruptibly();
+        } finally {
+            LOCK.unlock();
+        }
+    }
+ 
+    public static void o() {
+        LOCK.lock();
+        try {
+            check();
+            ++O;
+            ENOUGH_O.awaitUninterruptibly();
+        } finally {
+            LOCK.unlock();
+        }
+    }
+}`
+ 
+
