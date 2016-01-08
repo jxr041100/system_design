@@ -1,0 +1,80 @@
+Zenefits: Flip 0 or 1 
+
+
+
+You are given an array a of sizeN. The elements of the array area[0], a[1], ... a[N - 1], where each a is either 0 or 1. You can perform one transformation on the array: choose any two integers L,and R, and flip all the elements between (and including) the Lth and Rth bits. In other words, Land R represent the left-most and the right-most index demarcating the boundaries of the segment whose bits you will decided to flip. ('Flipping' a bit means, that a 0 is transformed to a 1 and a 1 is transformed to a 0.)
+
+What is the maximum number of '1'-bits (indicated by S) which you can obtain in the final bit-string?
+
+
+Input Format:The first line has a single integerNThe next N lines contains the Nelements in the array,a[0], a[1], ... a[N - 1], one per line.
+
+Note: Feel free to re-use the input-output code stubs provided.
+
+
+ Output format:Return a single integer that denotes the maximum number of 1-bits which can be obtained in the final bit string
+
+
+Constraints:. 1 ≤ N ≤ 100,000d can be either 0 or 1. It cannot be any other integer.0 ≤ L ≤ R < N
+Sample Input:
+8
+10010010
+Sample Output:
+6
+Explanation:We can get a maximum of 6 ones in the given binary array by performing either of the following operations:Flip [1, 5] ⇒ 1 1 1 0 1 1 1 0or
+Flip [1, 7] ⇒ 1 1 1 0 1 1 0 1
+
+Code (Java):
+
+import java.util.*;
+import java.io.*;
+ 
+public class Solution {
+ 
+ //need to complete the function below
+ public static int countUneatenLeaves(int[] A) {
+     if (A == null || A.length == 0) {
+         return 0;
+     }
+      
+     int curSum = 0;
+     int oneCount = 0;
+     int minSum = Integer.MAX_VALUE;
+      
+     for (int num : A) {
+         if (num == 0) {
+             curSum--;
+         } else {
+             curSum++;
+             oneCount++;
+         }
+          
+         if (curSum > 0) {
+             curSum = 0;
+         } else if (curSum < minSum) {
+             minSum = curSum;
+         }
+     }
+      
+     return oneCount - curSum;
+ }
+ 
+ public static void main(String[] args) throws IOException {
+  Scanner in = new Scanner(System.in);
+ 
+  int res;
+   
+  int _A_size = Integer.parseInt(in.nextLine());
+  int[] _A = new int[_A_size];
+  int _A_item;
+  for(int _A_i = 0; _A_i < _A_size; _A_i++) {
+   _A_item = Integer.parseInt(in.next());
+   _A[_A_i] = _A_item;
+  }
+ 
+  res = countUneatenLeaves(_A);
+  System.out.println(res);
+   
+ }
+}
+ 
