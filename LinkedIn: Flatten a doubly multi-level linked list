@@ -1,0 +1,63 @@
+LinkedIn: Flatten a doubly multi-level linked list 
+
+
+
+http://blog.csdn.net/craiglin1992/article/details/44917459
+
+
+Problem From Here: http://www.geeksforgeeks.org/flatten-a-linked-list-with-next-and-child-pointers/ 
+Given a linked list where in addition to the next pointer, each node has a child pointer, which may or may not point to a separate list. These child lists may have one or more children of their own, and so on, to produce a multilevel data structure, as shown in below figure.You are given the head of the first level of the list. Flatten the list so that all the nodes appear in a single-level linked list. You need to flatten the list in way that all nodes at first level should come first, then nodes of second level, and so on.
+
+Each node is a C struct with the following definition.
+
+struct list
+{
+    int data;
+    struct list *next;
+    struct list *child;
+};1
+
+
+The above list should be converted to 10->5->12->7->11->4->20->13->17->6->2->16->9->8->3->19->15
+
+
+Solution:
+We can first find the tail of the list. Then iterate over the first layer. If we see a child node, put the node to the end of the list and update the tail pointer. We repeat this process until we reach to the end of the list.
+
+ Code (Java):
+
+ 
+public class Solution {
+    public void flattenList(ListNode head) {
+        if (head == null) {
+            return;
+        }
+         
+        // Step 1: get the tail of the list
+        ListNode tail = head;
+        while (tail.next != null) {
+            tail = tail.next;
+        }
+         
+        // Step 2: iterate from the first layer. If a node has a child, put it to
+        // the end of hte list, and update the tail pointer
+        ListNode p = head;
+         
+        while (p != tail) {
+            if (p.child != null) {
+                ListNode childHead = p.child;
+                tail.next = chiidHead;
+                 
+                // Updat the tail
+                while (tail.next != null) {
+                    tail = tail.next;
+                }
+                 
+                p.child = null;
+            }
+             
+            p = p.next;
+        }
+    }
+}
+ 
