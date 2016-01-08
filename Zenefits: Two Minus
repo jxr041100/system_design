@@ -1,0 +1,67 @@
+Zenefits: Two Minus 
+
+
+
+在一个整数数组中（有重复元素）找出有多少对，满足条件：他们的差等于k。例如[1,5,5,2,4,6,7]，k=3，满足条件的对子有[1,4], [2,5], [2,5]（注意有两个5）,[4,7]，所以程序返回4。这题比较tricky的地方在于k=0的情况需要另外考虑一下。
+
+ Solution:
+1. Sort the array
+2. Maintain two pointers, lo and hi, points to index 0 and 1, respectively.
+3. If nums[hi] - nums[lo] == k. Add into result. Then we need to check the duplicates for lo + 1, lo + 2. .... If no duplicates, hi++. 
+4. if nums[hi] - nums[lo] > k. lo++
+5. If nums[hi] - nums[lo] < k, hi++. 
+ 
+ Java:
+
+import java.util.*;
+ 
+public class Solution {
+  public List<List<Integer>> findTwoMinus(int[] nums, int k) {
+    List<List<Integer>> result = new ArrayList<>();
+    if (nums == null || nums.length < 2) {
+      return result;
+    }
+     
+    Arrays.sort(nums);
+     
+    int lo = 0;
+    int hi = 1;
+    int n = nums.length;
+     
+    while (lo < n && hi < n) {
+      if (nums[hi] - nums[lo] == k) {
+        List<Integer> curr = new ArrayList<>();
+        curr.add(nums[lo]);
+        curr.add(nums[hi]);
+        result.add(curr);
+         
+        while (lo + 1 < n && nums[lo] == nums[lo + 1]) {
+          result.add(curr);
+          lo++;
+        }
+        hi++;
+         
+      } else if (nums[hi] - nums[lo] < k) {
+        hi++;
+      } else {
+        lo++;
+      }
+    }
+     
+    return result;
+  } 
+   
+  public static void main(String[] args) {
+    int[] nums = new int[]{1,5,5,2,4,6,7};
+    Solution solution = new Solution();
+    List<List<Integer>> result = solution.findTwoMinus(nums, 3);
+         
+    for (List<Integer> list : result) {
+      for (Integer num : list) {
+        System.out.print(num + ", ");
+      }
+      System.out.println("");
+    } 
+  }
+}
+ 
