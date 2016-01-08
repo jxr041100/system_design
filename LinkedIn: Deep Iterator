@@ -1,0 +1,67 @@
+LinkedIn: Deep Iterator 
+
+
+
+Question:
+
+题目是这样的
+eg: {{1,2},3,{4,{5,6}}}
+不断调用iterator的next()返回的序列是 1 2 3 4 5 6
+这个data structure的interface是这样的
+
+public interface Data<T> {
+    // Does this Data hold a collection?
+    public boolean isCollection();
+    // Returns the collection contained by     // this Data, or null if it is a single element
+    public Collection<Data<T>> getCollection();
+    // Returns the single element contained     //by this Data, or null if it is  collection
+    public T getElement();
+}
+Code (Java):
+
+public class DeepIterator implements Iterator<Data> {
+    private Stack<Iterator<Data>> stack = new Stack<>();
+    private Data top = null;
+     
+    public DeepIterator(List<Data> input) {
+        stack.push(input.iterator());
+    }
+     
+    @Override
+    public boolean hasNext() {
+        if (this.top != null) {
+            return true;
+        }
+         
+        while (!stack.isEmpty()) {
+            Iterator<Data> it = stack.peek();
+             
+            if (it.hasNext()) {
+                Data curr = it.next();
+                if (!curr.isCollection()) {
+                    top = curr.getElement();
+                    return true;
+                } else {
+                    stack.push(curr.getCollection.iterator());
+                }
+            } else {
+                stack.pop();
+            }
+        }
+         
+        return false;
+    }
+     
+    @Override
+    public Integer next() {
+        if (top != null) {
+            Integer result = top;
+            top = null;
+            return result;
+        } else {
+            return null;
+        }
+    }
+}
+ 
+
