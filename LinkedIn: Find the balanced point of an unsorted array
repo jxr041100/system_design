@@ -1,0 +1,75 @@
+LinkedIn: Find the balanced point of an unsorted array 
+
+
+
+Given a unsorted array, find the balanced point where the total sum of its left equals to the sum of its right. Return the index. If not exist, return -1.
+e.g. [1, 2, 1, 3, 0]. Return 2
+
+Code (Java):
+
+public class Solution {
+    public int findBalancedPoint(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+         
+        int n = nums.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+         
+        // Step 1: get the sum of its left
+        for (int i = 1; i < n; i++) {
+            left[i] = left[i - 1] + nums[i - 1];
+        }
+         
+        // Step 2: get the sum of its right
+        for (int i = n - 2; i >= 0; i--) {
+            right[i] = right[i + 1] + nums[i + 1];
+        }
+         
+        // Step 3: compare left[i] and right[i]
+         
+        for (int i = 0; i < n; i++) {
+            if (left[i] == right[i]) {
+                return i;
+            }
+        }
+         
+        return -1;
+    }
+}
+ 
+
+ 
+Constant space Solution:
+
+public class Solution {
+    public int findBalancedPoint(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+         
+        int sum = 0;
+        // Step 1: get the total sum of the array
+        for (int num : nums) {
+            sum += num;
+        }
+         
+        int leftSum = 0;
+        // Step 2: get the left sum
+        for (int i = 0; i < nums.length; i++) {
+            sum -= nums[i]; // sum now is the right sum
+             
+            if (leftSum == sum) {
+                return i;
+            }
+             
+            leftSum += nums[i];
+        }
+         
+        return -1;
+    }
+}
+ 
+
+ 
