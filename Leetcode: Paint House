@@ -1,0 +1,144 @@
+Leetcode: Paint House
+There are a row of n houses, each house can be painted with one of the three colors: red, blue or green. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color.
+The cost of painting each house with a certain color is represented by a n x 3 cost matrix. For example, costs[0][0] is the cost of painting house 0 with color red; costs[1][2] is the cost of painting house 1 with color green, and so on... Find the minimum cost to paint all houses.
+Note:
+All costs are positive integers.
+Understand the problem:
+Here we can show a wrong solution first, using the greedy algorithm. That is, each house we choose the min cost as long as it is not the same color as the previous one. 
+
+A wrong solution:
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+public class Solution {
+    public int minCost(int[][] costs) {
+        if (costs == null || costs.length == 0) {
+            return 0;
+        }
+         
+        int n = costs.length;
+         
+        int cost = Integer.MAX_VALUE;
+        int[] color = new int[n];
+         
+        // First house
+        int k;
+        int firstColor = 0;
+        for (k = 0; k < 3; k++) {
+            if (costs[0][k] < cost) {
+                cost = costs[0][k];
+                firstColor = k;
+            }
+        }
+         
+        color[0] = firstColor;
+         
+        for (int i = 1; i < n; i++) {
+            int localCost = Integer.MAX_VALUE;
+            for (int j = 0; j < 3; j++) {
+                if (j != color[i - 1] && costs[i][j] < localCost) {
+                    localCost = costs[i][j];
+                    color[i] = j;
+                }
+            }
+            cost += localCost;
+        }
+         
+        return cost;
+    }
+}
+
+A counter-example is :
+[[5,8,6],[19,14,13],[7,5,12],[14,15,17],[3,20,10]]
+Output : 47
+Expected : 43
+
+A DP solution:
+From the wrong solution we could see that the local optimism does not lead to the global optimism. 
+
+dp[i][j] -- the min cost for house i on painting color j
+dp[i][R] = cost[i][R] + Math.min(dp[i - 1][B], dp[i - 1][G]);
+dp[i][B] = cost[i][B] + Math.min(dp[i - 1][R], dp[i -1 ][G]);
+dp[i][G] = cost[i][G] + Math.min(dp[i - 1][R], dp[i - 1][B]);
+
+Final staus: min(dp[n - 1][R], dp[n - 1][B], dp[n - 1][G]);
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+public class Solution {
+    public int minCost(int[][] costs) {
+        if (costs == null || costs.length == 0) {
+            return 0;
+        }
+         
+        int[][] dp = new int[costs.length][3];
+         
+        dp[0][0] = costs[0][0];
+        dp[0][1] = costs[0][1];
+        dp[0][2] = costs[0][2];
+         
+        for (int i = 1; i < costs.length; i++) {
+            dp[i][0] = costs[i][0] + Math.min(dp[i - 1][1], dp[i - 1][2]);
+            dp[i][1] = costs[i][1] + Math.min(dp[i - 1][0], dp[i - 1][2]);
+            dp[i][2] = costs[i][2] + Math.min(dp[i - 1][0], dp[i - 1][1]);
+        }
+         
+        return Math.min(dp[costs.length - 1][0], Math.min(dp[costs.length - 1][1], dp[costs.length - 1][2]));
+    }
+}
