@@ -1,0 +1,73 @@
+Zenefits: Randomize inner word 
+
+
+
+Given a string of words,. Shuffle chars except for the first and last word for each word. 
+E.g. Input is  "I want to buy a cup of water"
+Output is "I wnat to buy a cup of wtear".
+
+ Solution:
+For each word, if its length is greater than 3, do shuffling. 
+
+ In-place solution:
+
+ 
+import java.util.*;
+ 
+public class Solution {
+    public String randomizeInnerWord(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+         
+        char[] words = s.toCharArray();
+         
+        int i = 0;
+        int j = 0;
+         
+        for (i = 0; i < words.length; i++) {
+            if (words[i] == ' ') {
+                int len = i - j;
+                 
+                if (len > 3) {
+                    shuffle(words, j + 1, i - 2);
+                }
+                 
+                j = i + 1;
+            }
+        }
+         
+        if (i - j > 3) {
+            shuffle(words, j + 1, i - 2);
+        }
+         
+        return new String(words);
+    }
+     
+    private void shuffle(char[] words, int start, int end) {
+        Random generator = new Random();
+        for (int i = start + 1; i <= end; i++) {
+            int r = generator.nextInt(i - start) + start;
+            swap(words, i, r);
+        }
+    }
+     
+    private void swap(char[] words, int i, int j) {
+        char temp = words[i];
+        words[i] = words[j];
+        words[j] = temp;
+    }
+     
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+         
+        Solution solution = new Solution();
+        String output = solution.randomizeInnerWord(input);
+         
+        System.out.println(output);
+         
+        sc.close();
+    }
+}
+ 
