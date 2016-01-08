@@ -1,0 +1,74 @@
+LinkedIn: Find all Triangles in an array 
+
+
+
+
+/**
+
+     * Find threevalues that can be the lengths of the sides of a triangle.
+
+     * Three segmentsof lengths A, B, C can form a triangle if and only if:
+
+     *
+
+     *      A + B > C
+
+     *      B + C > A
+
+     *      A + C > B
+
+     *
+
+     * e.g.
+
+     *  6, 4, 5 can form a triangle
+
+     * 10, 2, 7 can't
+
+     *
+
+     * @paramsegmentLengths the lengths of segments that might form a triangle.
+
+     * @return threevalues that can be the lengths of the sides of a triangle,
+
+     *         or an empty array if there are no suchvalues in segmentLengths.
+
+     * sample input:segmentLengths = [10, 5, 7, 4, 3]
+
+
+     */
+
+
+
+Solution:
+Sort the input first. Then iterate A[i], and A[j], and check if A[i] + A[j] > A[k]. If yes, add into the result. We don't have to test the other two because if the sum of the two short edges is greater than the long edge, then the condition automatically holds. 
+
+ Code (Java):
+
+public class Triangle {
+    public List<List<Integer>> validTriangle(int[] edges) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (edge == null || edges.length < 3) {
+            return result;
+        }
+         
+        Arrays.sort(edges);
+         
+        for (int i = 0; i < edges.length - 2; i++) {
+            for (int j = i + 1; j < edges.length - 1; j++) {
+                for (int k = j + 1; k < edges.length; k++) {
+                    if (edges[i] + edges[j] > edges[k]) {
+                        List<Integer> curr = new ArrayList<>();
+                        curr.add(edges[i]);
+                        curr.add(edges[j]);
+                        curr.add(edges[k]);
+                        result.add(curr);
+                    }
+                }
+            }
+        }
+         
+        return result;
+    }
+}
+ 
