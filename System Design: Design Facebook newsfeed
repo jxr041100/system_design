@@ -1,0 +1,74 @@
+System Design: Design Facebook newsfeed 
+
+
+
+这里有个talk
+http://www.infoq.com/presentations/Facebook-News-Feed
+http://www.infoq.com/presentations/Scale-at-Facebook
+对应的slides
+http://readme.skplanet.com/wp-content/uploads/2012/11/0-3_Faceb
+还有一些quora上的讨论
+http://www.quora.com/Activity-Streams/What-are-the-scaling-issu
+http://www.quora.com/What-are-best-practices-for-building-somet
+http://www.quora.com/What-is-the-best-storage-solution-for-buil
+
+A must to read:
+http://highscalability.com/blog/2013/10/28/design-decisions-for-scaling-your-high-traffic-feeds.html
+
+ 1. What is a news feed?
+
+
+News Feed is the constantly updating list of stories in the middle of your home page. News Feed includes status updates, photos, videos, links, app activity and likes from people, Pages and groups that you follow on Facebook.
+
+ The process of pushing an activity to all your followers is called a fanout.
+
+
+ 2. What to Store
+
+Determining what data to store depends on your front-end (including what activities your users participate in) and your back-end. I'll describe some general information you can store. Italics are special, optional information you might want or need depending on your schema.
+
+Activity(id, user_id, source_id, activity_type, edge_rank, parent_id, parent_type, data, time)
+
+•user_id - user who generated activity
+•source_id - record activity is related to
+•activity_type - type of activity (photo album, comment, etc.)
+•edge_rank - the rank for this particular activity
+•parent_type - the parent activity type (particular interest, group, etc.)
+•parent_id - primary key id for parent type
+•data - serialized object with meta-data
+
+Assuming you're using MySQL as your database store, you can index on (user_id, time) and then perform your basic queries. An example feed row for a photo would be:
+
+
+(id: 1, user_id: 1, source_id: some_source, activity_type:PHOTO, data: (photo_id: 1, photo_name: Getting married)).
+
+In MySQL, your tables would be heavily denormalized since performing joins will hurt performance.
+
+Potential Problems
+•Visibility - must show interesting activities
+•Performance - sorting time must be minimized
+•Publishing - multiples points of failure depending on your publish method
+
+
+
+
+ 
+
+3. Publishing Methods
+
+"Push" Model, or Fan-out-on-write
+
+This method involves denormalizing the user's activity data and pushing the metadata to all the user's friends at the time it occurs. You store only one copy of the data as in the schema above, then push pointers to friends with the metadata. The problem with this method is that if you have a large fan-out (a large number of followers), you run the risk of this breaking while your feed accumulates a backlog. If you go with this strategy, you also risk a large number of disk seeks and random writes. You'll want some sort of write-optimized data store such as Cassandra, HBase, or BigTable.
+
+"Pull" Model, or Fan-out-on-load
+
+This method involves keeping all recent activity data in memory and pulling in (or fanning out) that data at the time a user loads their home page. Data doesn't need to be pushed out to all subscribers as soon as it happens, so no back-log and no disk seeks. The problem with this method is that you may fail to generate a user's news feed altogether. To mitigate this risk, you should have a fallback mechanism in place that approximates the user's feed or serves as a good alternative.
+
+Some Suggestions
+•If you're using MySQL, you'll be want to be sure that your activities table is compact as possible, your keys are small, and that it's indexed appropriately.
+•You may want to use Redis for fast access to fresh activity stream data. Redis is read-optimized and stores all data in memory. This is a good approach for the "Push" model described above.
+
+Conclusions
+While this is by no means an exhaustive answer, I'm trying to summarize as much information as I can. My sources for this answer are collected in the links below, so any information in this answer sadly goes without direct attribution. Special thanks, however, goes to Ari Steinberg for his very detailed answer to What are the scaling issues to keep in mind while developing a social network feed?
+
+As I said at the beginning, I would love to get comments, feedback, or alternative approaches on this answer
