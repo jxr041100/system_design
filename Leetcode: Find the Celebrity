@@ -1,0 +1,147 @@
+Leetcode: Find the Celebrity
+Suppose you are at a party with n people (labeled from 0 to n - 1) and among them, there may exist one celebrity. The definition of a celebrity is that all the other n - 1people know him/her but he/she does not know any of them.
+Now you want to find out who the celebrity is or verify that there is not one. The only thing you are allowed to do is to ask questions like: "Hi, A. Do you know B?" to get information of whether A knows B. You need to find out the celebrity (or verify there is not one) by asking as few questions as possible (in the asymptotic sense).
+You are given a helper function bool knows(a, b) which tells you whether A knows B. Implement a function int findCelebrity(n), your function should minimize the number of calls to knows.
+Note: There will be exactly one celebrity if he/she is in the party. Return the celebrity's label if there is a celebrity in the party. If there is no celebrity, return -1.
+Understand the problem:
+The problem can be transformed as a graph problem. We count the in-degree and out-degree for each person. Then find out the person with in-degree n - 1 and out-degree 0. 
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+/* The knows API is defined in the parent class Relation.
+      boolean knows(int a, int b); */
+ 
+public class Solution extends Relation {
+    public int findCelebrity(int n) {
+        if (n <= 1) {
+            return -1;
+        }
+         
+        int[] inDegree = new int[n];
+        int[] outDegree = new int[n];
+         
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i != j && knows(i, j)) {
+                    outDegree[i]++;
+                    inDegree[j]++;
+                }
+            }
+        }
+         
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == n - 1 && outDegree[i] == 0) {
+                return i;
+            }
+        }
+         
+        return -1;
+    }
+}
+
+Analysis:
+Time O(n^2).
+Space O(n).
+
+A O(n) time O(1) Space Solution:
+Use two pointers, left starts from 0, and right starts from n - 1.
+Check if knows(left, right). If yes, left++. Else, right--.
+After the first step, we could find out the potential candidate. 
+In the second step, we validate the candidate by iterating through all the person again. Each one must know the candidate while the candidate must not know anyone else. 
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+/* The knows API is defined in the parent class Relation.
+      boolean knows(int a, int b); */
+ 
+public class Solution extends Relation {
+    public int findCelebrity(int n) {
+        if (n <= 1) {
+            return -1;
+        }
+         
+        int left = 0;
+        int right = n - 1;
+         
+        // Step 1: Find the potential candidate
+        while (left < right) {
+            if (knows(left, right)) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+         
+        // Step 2: Validate the candidate
+        int candidate = right;
+        for (int i = 0; i < n; i++) {
+            if (i != candidate && (!knows(i, candidate) || knows(candidate, i))) {
+                return -1;
+            }
+        }
+         
+        return candidate;
+    }
+}
