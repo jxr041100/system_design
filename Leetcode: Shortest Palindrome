@@ -1,0 +1,64 @@
+Leetcode: Shortest Palindrome
+Given a string S, you are allowed to convert it to a palindrome by adding characters in front of it. Find and return the shortest palindrome you can find by performing this transformation.
+For example:
+Given "aacecaaa", return "aaacecaaa".
+Given "abcd", return "dcbabcd".
+Understand the problem:
+The straight-forward solution is: find the longest palindrome substring starting with s[0]. Then insert the remaining of the string s to the front in a reverse order.
+
+Code (Java):
+
+public class Solution {
+    public String shortestPalindrome(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+         
+        int maxLen = 0;
+        // Step 1: find the longest palindromic substring including s.charAt(0)
+        for (int i = 0; i < s.length(); i++) {
+            // Odd
+            int p = i - 1;
+            int q = i + 1;
+            int len = 1;
+            while (p >= 0 && q < s.length() && s.charAt(p) == s.charAt(q)) {
+                len += 2;
+                p--;
+                q++;
+            }
+             
+            if (p == -1 && len > maxLen) {
+                maxLen = len;
+            }
+             
+            // Even
+            p = i;
+            q = i + 1;
+            len = 0;
+            while (p >= 0 && q < s.length() && s.charAt(p) == s.charAt(q)) {
+                p--;
+                q++;
+                len += 2;
+            }
+             
+            if (p == -1 && len > maxLen) {
+                maxLen = len;
+            }
+        }
+         
+        int j = maxLen;
+        StringBuffer sb = new StringBuffer();
+        for (int m = s.length() - 1; m >= j; m--) {
+            sb.append(s.charAt(m));
+        }
+         
+        sb.append(s);
+         
+        return sb.toString();
+    }
+}
+
+Analysis:
+The time complexity to find out the longest palindrome substring starting from s[0] is O(n^2). So the overall time complexity is O(n^2) as well. 
+
+KMP solution:
