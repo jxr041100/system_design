@@ -1,0 +1,66 @@
+Zenefits: Middle element 
+
+在一个整数数组中（无重复元素）找出一个元素，使得其大于所有他前面的数，并且小于所有他后面的数，返回其下标。例如[4,1,2,6,10,7]中，6满足条件，返回下标3。若有多个满足条件，返回一个即可。若无，返回-1
+
+ Solution:
+Maintain two arrays, left[] and right[]. The left[i] stores the biggest element prior to i. The right[i] stores the minimum value after i. 
+
+ Then for each element in array nums[i]. If it is greater than the biggest element left to i, and smaller than the smallest element after i. Then nums[i] must be the intermediate element.
+
+ Code (Java):
+
+ 
+import java.util.*;
+ 
+public class Solution {
+  public int findMiddleElement(int[] nums) {
+    if (nums == null || nums.length == 0) {
+      return -1;
+    }
+    int len = nums.length;
+    int[] left = new int[len];
+    int[] right = new int[len];
+     
+    // Find the max element left to i
+    left[0] = Integer.MIN_VALUE;
+    int max = Integer.MIN_VALUE;
+    for (int i = 1; i < len; i++) {
+      if (nums[i - 1] > max) {
+        max = nums[i - 1];
+      }
+       
+      left[i] = max;
+    }
+     
+    // Find the min element after to i
+    right[len - 1] = Integer.MAX_VALUE;
+    int min = Integer.MAX_VALUE;
+     
+    for (int i = len - 2; i >= 0; i--) {
+      if (nums[i + 1] < min) {
+        min = nums[i + 1];
+      }
+       
+      right[i] = min;
+    }
+     
+    // Iterate the nums and check if there is
+    // an element which is greater than left[i]
+    // less than right[i]
+    for (int i = 0; i < len; i++) {
+      if (nums[i] > left[i] && nums[i] < right[i]) {
+        return i;
+      }
+    }
+     
+    return -1;
+  }
+   
+  public static void main(String[] args) {
+    Solution solution = new Solution();
+    int[] nums = new int[]{4, 1, 2, 6, 10, 7};
+    int result = solution.findMiddleElement(nums);
+    System.out.println(result);
+  }
+}
+ 
