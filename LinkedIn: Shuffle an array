@@ -1,0 +1,27 @@
+LinkedIn: Shuffle an array 
+
+Question:
+Randomly shuffle an array. 
+
+ Code (Java):
+
+import java.io.*;
+import java.util.*;
+ 
+public class Solution {
+    public void shuffle(int[] A) {
+        if (A == null || A.length == 0) {
+            return;
+        }
+         
+        Random generator = new Random();
+         
+        for (int i = 1; i < A.length; i++) {
+            int randomIndex = generator.getInt(i);
+            int temp = A[randomIndex];
+            A[randomIndex] = A[i];
+            A[i] = temp;
+        }
+    }
+}
+ 
