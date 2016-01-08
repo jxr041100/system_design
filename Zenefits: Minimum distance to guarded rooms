@@ -1,0 +1,111 @@
+Zenefits: Minimum distance to guarded rooms 
+
+
+
+
+求每个元素到guaraded room的最短距离
+
+0: closed room
+
+1: open room
+
+2: guarded room
+
+例如input
+
+1 2 1
+
+1 0 1
+
+1 2 1
+
+那么output是
+
+1 0  1.
+
+2 -1 2
+
+
+1 0  1
+
+
+
+
+Understand the problem:
+比较类似Leetocode walls and gates:http://buttercola.blogspot.com/2015/09/leetcode-walls-and-gates.html
+
+We can first pre-process the input matrix, where change 
+2 -> 0, because distance from guarded room itself is 0.
+1 -> MAX, means the distance to the guarded room is MAX
+0 -> -1, means the distance is -1 to the guarded room.
+
+ Then the entire problem is the same as the Leetcode Walls and Gates
+
+A BFS Solution:
+public class Solution {
+    public void wallsAndGates(int[][] rooms) {
+        if (rooms == null || rooms.length == 0) {
+            return;
+        }
+         
+        int m = rooms.length;
+        int n = rooms[0].length;
+         
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (rooms[i][j] == 0) {
+                    wallsAndGatesHelper(i, j, 0, rooms, queue);
+                }
+            }
+        }
+    }
+     
+    private void wallsAndGatesHelper(int row, int col, int distance, int[][] rooms, Queue<Integer> queue) {
+        fill(row, col, distance, rooms, queue);
+         
+        int m = rooms.length;
+        int n = rooms[0].length;
+         
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                int cord = queue.poll();
+                int x = cord / n;
+                int y = cord % n;
+             
+                fill(x - 1, y, distance + 1, rooms, queue);
+                fill(x + 1, y, distance + 1, rooms, queue);
+                fill(x, y - 1, distance + 1, rooms, queue);
+                fill(x, y + 1, distance + 1, rooms, queue);
+             
+            }
+            distance++;
+        }
+    }
+     
+    private void fill (int row, int col, int distance, int[][] rooms, Queue<Integer> queue) {
+        int m = rooms.length;
+        int n = rooms[0].length;
+         
+        if (row < 0 || row >= m || col < 0 || col >= n) {
+            return;
+        }
+         
+        if (rooms[row][col] == -1) {
+            return;
+        }
+         
+        if (distance > rooms[row][col]) {
+            return;
+        }
+         
+        if (distance < rooms[row][col]) {
+            rooms[row][col] = distance;
+        }
+         
+        int cord = row * n + col;
+        queue.offer(cord);
+    }
+}
+ 
