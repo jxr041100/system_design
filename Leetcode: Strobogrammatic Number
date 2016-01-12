@@ -1,0 +1,88 @@
+Leetcode: Strobogrammatic Number
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+Write a function to determine if a number is strobogrammatic. The number is represented as a string.
+For example, the numbers "69", "88", and "818" are all strobogrammatic.
+Understand the problem:
+The key of the problem is to understand what is called "strobogrammatic number". As defined, the number 0, 1 and 8 are strobogrammatic. However, 6 and 9 are kind of special. E.g. 
+6 0 0 9, return True
+66 000 99, return True;
+6969 return true; 
+6996, return true;
+
+Consequently, we could use two pointers, one starts from the beginning and one from the end. If they are equal && substrobogrammatic (not including 6 and 9), continue; else return false. If not, but could be 6 and 9 or 9 and 6, respectively, continue; else return false;
+
+Code (Java):
+public class Solution {
+    public boolean isStrobogrammatic(String num) {
+        if (num == null || num.length() == 0) {
+            return true;
+        }
+        
+        int lo = 0;
+        int hi = num.length() - 1;
+        
+        while (lo <= hi) {
+            if (num.charAt(lo) == num.charAt(hi)) {
+                if (isStrobo(num.charAt(lo))) {
+                    hi--;
+                    lo++;
+                } else {
+                    return false;
+                }
+            } else {
+                if ((num.charAt(lo) == '6' && num.charAt(hi) == '9') ||
+                    (num.charAt(lo) == '9' && num.charAt(hi) == '6')) {
+                    hi--;
+                    lo++;
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean isStrobo(Character num) {
+        return num == '0' || num == '1' || num == '8';
+    }
+}
+
+Another method using a HashMap:
+You can start out by comparing each character at the beginning of the string to each character at the end of the string and seeing if those characters are suitable rotations of each other. The only digits that are valid rotations of another digit are: 0 -> 0, 1 -> 1, 6 -> 9, 8 -> 8, and 9 -> 6. So if the currently examined digit is one of these digits, compare it to the corresponding digit at the other end of the string and see if it is the digit mapped to in the lookup table. If it is not found in the lookup table (for example if it was a 2, 3, 4, 5, or 7) or if it is not matched with the required digit, then the number cannot be strobogrammatic.
+
+Code (Java):
+public class Solution {
+    public boolean isStrobogrammatic(String num) {
+        if(num == null || num.length() == 0) {
+            return true;
+        }
+        
+        Map<Character, Character> map = new HashMap<>();
+        map.put('0', '0');
+        map.put('1', '1');
+        map.put('8', '8');
+        map.put('6', '9');
+        map.put('9', '6');
+        
+        int lo = 0;
+        int hi = num.length() - 1;
+        
+        while (lo <= hi) {
+            char c1 = num.charAt(lo);
+            char c2 = num.charAt(hi);
+            
+            if (!map.containsKey(c1) || map.get(c1) != c2) {
+                return false;
+            }
+            
+            lo++;
+            hi--;
+        }
+        
+        return true;
+    }
+}
+
+Summary:
+One corner case needs to be careful in the code above is: the condition in the while loop is lo <= hi, not lo < hi. Because the number in the middle must also be in the map as well. 
