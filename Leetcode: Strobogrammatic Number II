@@ -1,0 +1,139 @@
+Leetcode: Strobogrammatic Number II
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+Find all strobogrammatic numbers that are of length = n.
+For example,
+Given n = 2, return ["11","69","88","96"].
+Understand the problem: 
+The problem is an extension of the last problem. It could be solved by using recursion. 
+There are two things need to be careful:
+In each recursion, it should recurse with n - 2 not n / 2
+Secondly, noticed that the strobogrammatic number should not contain leading "0"s. 
+
+Code (Java):
+public class Solution {
+    private List<String> result = new ArrayList<String>();
+    private Map<String, String> hashMap = new HashMap<String, String>();
+    
+    public List<String> findStrobogrammatic(int n) {
+        result.clear();
+        hashMap.clear();
+        fillHashMap(hashMap);
+        
+        findStrobogrammaticHelper(n);
+        
+        return result;
+    }
+    
+    private void findStrobogrammaticHelper(int n) {
+        if (n <= 0) {
+            return;
+        }
+        List<String> currResult = new ArrayList<String>();
+        int size = 0;
+        if (n == 1) {
+            if (!result.isEmpty()) {
+                size = result.get(0).length();
+                int mid = size / 2;
+        
+                for (String str : result) {
+                    StringBuffer sb = new StringBuffer(str);
+                    sb.insert(mid, '0');
+                    currResult.add(sb.toString());
+                    
+                    sb.setCharAt(mid, '1');
+                    currResult.add(sb.toString());
+                    
+                    sb.setCharAt(mid, '8');
+                    currResult.add(sb.toString());
+                }
+                result.clear();
+                result.addAll(new ArrayList(currResult));
+            } else {
+                result.add("0");
+                result.add("1");
+                result.add("8");
+            }
+        }
+        
+        if (n > 1) {
+            if (result.isEmpty()) {
+                Iterator it = hashMap.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    String elem = pair.getKey() + "" + pair.getValue();
+                    if (!elem.equals("00")) {
+                        result.add(elem);
+                    }
+                }
+            } else {
+                size = result.get(0).length();
+                int mid = size / 2;
+                for (String str : result) {
+                    Iterator it = hashMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        StringBuffer sb = new StringBuffer(str);
+                        String elem = pair.getKey() + "" + pair.getValue();
+                        sb.insert(mid, elem);
+                        currResult.add(sb.toString());
+                    }
+                }
+                result.clear();
+                result.addAll(new ArrayList(currResult));
+            }
+        }
+        
+        findStrobogrammaticHelper(n - 2);
+    }
+    
+    private void fillHashMap(Map<String, String> hashMap) {
+        hashMap.put("0", "0");
+        hashMap.put("1", "1");
+        hashMap.put("8", "8");
+        hashMap.put("6", "9");
+        hashMap.put("9", "6");
+    }
+}
+
+A cleaner code:
+public class Solution {
+    private List<String> result = new ArrayList<String>();
+    private Map<Character, Character> hashMap = new HashMap<>();
+    
+    public List<String> findStrobogrammatic(int n) {
+        result.clear();
+        hashMap.clear();
+        fillHashMap(hashMap);
+        
+        char[] arr = new char[n];
+        findStrobogrammaticHelper(arr, 0, n - 1);
+        
+        return result;
+    }
+    
+    private void findStrobogrammaticHelper(char[] arr, int lo, int hi) {
+        if (lo > hi) {
+            if (arr.length == 1 || (arr.length > 1 && arr[0] != '0')) {
+                result.add(new String(arr));
+            }
+            return;
+        }
+        
+        for (Character c : hashMap.keySet()) {
+            arr[lo] = c;
+            arr[hi] = hashMap.get(c);
+            
+            if (lo < hi || (lo == hi && hashMap.get(c) == c)) {
+                findStrobogrammaticHelper(arr, lo + 1, hi - 1);
+            }
+        }
+    }
+    
+    private void fillHashMap(Map<Character, Character> hashMap) {
+        hashMap.put('0', '0');
+        hashMap.put('1', '1');
+        hashMap.put('8', '8');
+        hashMap.put('6', '9');
+        hashMap.put('9', '6');
+    }
+}
