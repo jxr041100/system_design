@@ -1,0 +1,176 @@
+Leetcode: Factor Combinations
+Numbers can be regarded as product of its factors. For example,
+8 = 2 x 2 x 2;
+  = 2 x 4.
+Write a function that takes an integer n and return all possible combinations of its factors.
+Note: 
+Each combination's factors must be sorted ascending, for example: The factors of 2 and 6 is [2, 6], not [6, 2].
+You may assume that n is always positive.
+Factors should be greater than 1 and less than n.
+Examples: 
+input: 1
+output: 
+[]
+input: 37
+output: 
+[]
+input: 12
+output:
+[
+  [2, 6],
+  [2, 2, 3],
+  [3, 4]
+]
+input: 32
+output:
+[
+  [2, 16],
+  [2, 2, 8],
+  [2, 2, 2, 4],
+  [2, 2, 2, 2, 2],
+  [2, 4, 4],
+  [4, 8]
+]
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+public class Solution {
+    public List<List<Integer>> getFactors(int n) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (n <= 3) {
+            return result;
+        }
+         
+        List<Integer> curr = new ArrayList<Integer>();
+         
+        getFactorsHelper(n, n, 2, curr, result);
+         
+        return result;
+    }
+     
+    private void getFactorsHelper(int ori, int n, int start, List<Integer> curr, List<List<Integer>> result) {
+        if (n <= 1) {
+            result.add(new ArrayList<Integer>(curr));
+            return;
+        }
+         
+        for (int i = start; i <= n && i < ori; i++) {
+            if (n % i == 0) {
+                curr.add(i);
+                getFactorsHelper(ori, n / i, i, curr, result);
+                curr.remove(curr.size() - 1);
+            }
+        }
+    }
+}
+
+Update on 10/21/15:
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+public class Solution {
+    public List<List<Integer>> getFactors(int n) {
+        List<List<Integer>> result = new ArrayList<>();
+         
+        if (n <= 1) {
+            return result;
+        }
+         
+        List<Integer> curr = new ArrayList<>();
+         
+        getFactorsHelper(2, 1, n, curr, result);
+         
+        return result;
+    }
+     
+    private void getFactorsHelper(int start, int product, int n, List<Integer> curr, List<List<Integer>> result) {
+        if (start > n || product > n) {
+            return;
+        }
+         
+        if (product == n) {
+            result.add(new ArrayList<Integer>(curr));
+            return;
+        }
+         
+        for (int i = start; i < n; i++) {
+            if (i * product > n) {
+                break;
+            }
+             
+            if (n % (product * i) == 0) {
+                curr.add(i);
+                getFactorsHelper(i, product * i, n, curr, result);
+                curr.remove(curr.size() - 1);
+            }
+        }
+    }
+}
+
+Summary:
+There is one trick in this problem. For each candidate factor we tried, we must make sure it is dividable by n. Thus we can avoid many unnecessary recursion calls. 
