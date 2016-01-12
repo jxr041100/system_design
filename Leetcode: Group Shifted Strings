@@ -1,0 +1,134 @@
+Leetcode: Group Shifted Strings
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+"abc" -> "bcd" -> ... -> "xyz"
+Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+For example, given: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"], 
+Return:
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+Note: For the return value, each inner list's elements must follow the lexicographic order.
+Understand the problem:
+The problem looks quite like the grouping anagrams. So the idea is the same: for each string, find out its "original" format, and check if the hash map contains this original string. If yes, put into the map. 
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+public class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> result = new ArrayList<List<String>>();
+        if (strings == null || strings.length == 0) {
+            return result;
+        }
+         
+        Arrays.sort(strings, new LexComparator());
+         
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+         
+        for (String s : strings) {
+            StringBuffer sb = new StringBuffer();
+            int distance = Character.getNumericValue(s.charAt(0)) - 'a';
+            for (int i = 0; i < s.length(); i++) {
+                int val = Character.getNumericValue(s.charAt(i)) - distance;
+                val = val < 'a' ? val + 26 : val;
+                char ori = (char) val;
+                sb.append(ori);
+            }
+            String original = sb.toString();
+            if (map.containsKey(original)) {
+                List<String> list = map.get(original);
+                list.add(s);
+                map.put(original, list);
+            } else {
+                List<String> list = new ArrayList<String>();
+                list.add(s);
+                map.put(original, list);
+            }
+        }
+         
+        // Iterate the map
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            result.add((List<String>) pair.getValue());
+        }
+         
+        return result;
+    }
+     
+    private class LexComparator implements Comparator<String> {
+        @Override
+        public int compare(String a, String b) {
+            if (a.length() != b.length()) {
+                return a.length() - b.length();
+            }
+             
+            for (int i = 0; i < a.length(); i++) {
+                if (a.charAt(i) != b.charAt(i)) {
+                    return a.charAt(i) - b.charAt(i);
+                }
+            }
+            return 0;
+        }
+    }
+}
