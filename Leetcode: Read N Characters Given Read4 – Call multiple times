@@ -1,0 +1,68 @@
+Leetcode: Read N Characters Given Read4 – Call multiple times
+Question:
+Similar to Question [15. Read N Characters Given Read4], but the read function may be
+called multiple times.
+
+Solution:
+This makes the problem a lot more complicated, because it can be called multiple times
+and involves storing states.
+
+Therefore, we design the following class member variables to store the states:
+i. buffer – An array of size 4 use to store data returned by read4 temporarily. If
+the characters were read into the buffer and were not used partially, they will
+be used in the next call.
+
+ii. offset – Use to keep track of the offset index where the data begins in the next
+read call. The buffer could be read partially (due to constraints of reading up
+to n bytes) and therefore leaving some data behind.
+
+iii. bufsize – The real buffer size that stores the actual data. If bufsize > 0, that
+means there is partial data left in buffer from the last read call and we should
+consume it before calling read4 again. On the other hand, if bufsize == 0, it
+means there is no data left in buffer.
+
+This problem is a very good coding exercise. Coding it correctly is extremely tricky due
+
+to the amount of edge cases to consider.
+
+Code (Java):
+/* The read4 API is defined in the parent class Reader4.
+int read4(char[] buf); */
+public class Solution extends Reader4 {
+    private char[] buffer = new char[4];
+    int offset = 0, bufsize = 0;
+/**
+* @param buf Destination buffer
+* @param n   Maximum number of characters to read
+* @return    The number of characters read
+*/
+    public int read(char[] buf, int n) {
+        int readBytes = 0;
+        boolean eof = false;
+        while (!eof && readBytes < n) {
+            int sz = (bufsize > 0) ? bufsize : read4(buffer);
+            if (bufsize == 0 && sz < 4) eof = true;
+            int bytes = Math.min(n - readBytes, sz);
+            System.arraycopy(buffer /* src */, offset /* srcPos */, buf /* dest */, 
+                readBytes /* destPos */, bytes /* length */);
+            offset = (offset + bytes) % 4;
+            bufsize = sz - bytes;
+            readBytes += bytes;
+        }
+        return readBytes;
+    }
+}
+
+Summary:
+This problem is not very hard, but requires thinking of every corner cases. To sum up, the key of the problem is to put the char buf4[4] into global, and maintains two more global variables: 
+ -- offset : the starting position in the buf4 that a read() should start from. 
+ -- bytesLeftInBuf4 : how many elements left in the buf4. 
+
+One corner case to consider is when is the eof should be true? In the previous question, it is true only if bytesFromRead4 < 4. However, in this question, since we might have some bytes left the buf4, even if it is not end of the file, we may mistakely consider the eof as true. So the condition to set eof is true is bytesFromRead4 < 4 && bytesLeftInBuf4 == 0 
+
+Another corner case we need to consider is: if the bytesFromRead4 + bytesRead > n, the actual bytes to copy is n - bytesRead. 
+For example, the file is "abcde", and read(2), in this case, the bytesFromRead4 = 4, but we should only copy 2 bytes from the buf4. So be very careful about this case. 
+
+At the end, we need to update the global offset and bytesLeftInBuf4, as well as the local bytesRead. 
+
+Do execrise more about this question, this is really classical. 
