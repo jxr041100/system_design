@@ -1,0 +1,269 @@
+Leetcode: Flatten 2D Vector
+Implement an iterator to flatten a 2d vector.
+For example,
+Given 2d vector =
+[
+  [1,2],
+  [3],
+  [4,5,6]
+]
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+Hint:
+How many variables do you need to keep track?
+Two variables is all you need. Try with x and y.
+Beware of empty rows. It could be the first few rows.
+To write correct code, think about the invariant to maintain. What is it?
+The invariant is x and y must always point to a valid point in the 2d vector. Should you maintain your invariant ahead of time or right when you need it?
+Not sure? Think about how you would implement hasNext(). Which is more complex?
+Common logic in two different places should be refactored into a common method.
+Understand the problem:
+The question itself is very easy to solve. Just several corner cases need to think of:
+  -- What if the 2d vector contains empty arrays, e.g. [ ], [ ], 1 2 3 ? In this case, the next() should not output anything, but the return type is int. There the hasNext() should be more complicated in which it handles this situation. 
+  -- What if the 2d vector itself is empty? Again, handle it in hasNext() 
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+public class Vector2D {
+     
+    private List<List<Integer>> vec2d;
+    private int rowId;
+    private int colId;
+    private int numRows;
+     
+    public Vector2D(List<List<Integer>> vec2d) {
+        this.vec2d = vec2d;
+        rowId = 0;
+        colId = 0;
+        numRows = vec2d.size();
+    }
+ 
+    public int next() {
+        int ans = 0;
+         
+        if (colId < vec2d.get(rowId).size()) {
+            ans = vec2d.get(rowId).get(colId);
+        }
+         
+        colId++;
+         
+        if (colId == vec2d.get(rowId).size()) {
+            colId = 0;
+            rowId++;
+        }
+         
+        return ans;
+    }
+ 
+    public boolean hasNext() {
+        while (rowId < numRows && (vec2d.get(rowId) == null || vec2d.get(rowId).isEmpty())) {
+            rowId++;
+        }
+         
+        return vec2d != null && 
+        !vec2d.isEmpty() &&
+        rowId < numRows;
+    }
+}
+ 
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
+
+
+Followup:
+As an added challenge, try to code it using only iterators in C++ or iterators in Java.
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+public class Vector2D {
+    private Iterator<List<Integer>>outerIterator;
+    private Iterator<Integer> innerIterator;
+ 
+    public Vector2D(List<List<Integer>> vec2d) {
+        outerIterator = vec2d.iterator();
+        innerIterator = Collections.emptyIterator();
+    }
+ 
+    public int next() {
+        return innerIterator.next();
+    }
+ 
+    public boolean hasNext() {
+        if (innerIterator.hasNext()) {
+            return true;
+        }
+         
+        if (!outerIterator.hasNext()) {
+            return false;
+        }
+         
+        innerIterator = outerIterator.next().iterator();
+         
+         
+        return hasNext();
+    }
+}
+ 
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
+
+Summary:
+There are multiple corner cases need to handle:
+1. If the 2d vec contains empty vec, e.g. [ ], [ ] , [1, 2], [ ], [ ], [3], we need to handle it in method hasNext();
+2. In the method 2 using only the Iterator solution, the innerIterator must be initilized as Collections.emptyIterator() because the method hasNext() first checks if the innerIterator.hasNext(), so the inner iterator itself must be an iterator at first. 
+
+
+Update on 11/18/15:
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+public class Vector2D {
+    private Iterator<List<Integer>> outer;
+    private Iterator<Integer> inner;
+ 
+    public Vector2D(List<List<Integer>> vec2d) {
+        outer = vec2d.iterator();
+        inner = Collections.emptyIterator(); //inner = outer.iterator(); wrong: if outer is null, then exception
+    }
+ 
+    public int next() {
+        return inner.next();
+    }
+ 
+    public boolean hasNext() {
+        if (inner.hasNext()) {
+            return true;
+        }
+        if (!outer.hasNext()) {
+            return false;
+        }
+        inner = outer.next().iterator();
+        while(!inner.hasNext() && outer.hasNext()) {
+            inner = outer.next().iterator();
+        }
+        return inner.hasNext();
+    }
+}
+ 
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
