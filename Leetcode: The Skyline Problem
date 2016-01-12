@@ -1,0 +1,335 @@
+Leetcode: The Skyline Problem
+A city's skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you are given the locations and height of all the buildings as shown on a cityscape photo (Figure A), write a program to output the skyline formed by these buildings collectively (Figure B).
+ 
+The geometric information of each building is represented by a triplet of integers [Li, Ri, Hi], where Li and Ri are the x coordinates of the left and right edge of the ith building, respectively, and Hi is its height. It is guaranteed that 0 ≤ Li, Ri ≤ INT_MAX, 0 < Hi ≤ INT_MAX, and Ri - Li > 0. You may assume all buildings are perfect rectangles grounded on an absolutely flat surface at height 0.
+For instance, the dimensions of all buildings in Figure A are recorded as: [ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] .
+The output is a list of "key points" (red dots in Figure B) in the format of [ [x1,y1], [x2, y2], [x3, y3], ... ] that uniquely defines a skyline. A key point is the left endpoint of a horizontal line segment. Note that the last key point, where the rightmost building ends, is merely used to mark the termination of the skyline, and always has zero height. Also, the ground in between any two adjacent buildings should be considered part of the skyline contour.
+For instance, the skyline in Figure B should be represented as:[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ].
+Notes:
+
+
+The number of buildings in any input list is guaranteed to be in the range [0, 10000].
+The input list is already sorted in ascending order by the left x position Li.
+The output list must be sorted by the x position.
+There must be no consecutive horizontal lines of equal height in the output skyline. For instance, [...[2 3], [4 5], [7 5], [11 5], [12 7]...] is not acceptable; the three lines of height 5 should be merged into one in the final output as such: [...[2 3], [4 5], [12 7], ...]
+Understand the problem:
+The problem looks quite tricky. It looks very like the segment intervals problem. For this kind of problems, one general solution is :
+  -- First, split the left key point and the right key point into two parts and store into another data structure. For this problem, [2 9 10] can be split into [2, 10, L] and [9, 10, R]
+  -- Then, sort the split list according to the x coordinate, if equal, sort by height. Note that for this problem, if two x coordinates are Left end, the greater height should be before the lower, because the lower height is hidden. If both are Right end, put the lower first. 
+  -- Thirdly, iterate the sorted list. If the end point is left. Put into the priority queue. Note that if the priority queue is empty or the height of the end point is greater than the peek of the pq, put the end point into result list. If the end point is right. Remove the point from pq. If pq is empty then, put a <x, 0> into result list. Else, if the height of the end point is greater than the peek of the pq, put <x, peek()> into the result list. 
+
+Code (Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+public class Solution {
+    private class Edge {
+        private int x;
+        private int height;
+        private boolean isLeft;
+         
+        // Constructor
+        public Edge(int x, int height, boolean isLeft) {
+            this.x = x;
+            this.height = height;
+            this.isLeft = isLeft;
+        }
+    }
+     
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<int[]> result = new ArrayList<int[]>();
+         
+        if (buildings == null || buildings.length == 0 || buildings[0].length == 0) {
+            return result;
+        }
+         
+        PriorityQueue<Integer> pq = new PriorityQueue<>(1000, Collections.reverseOrder());
+         
+        // Parse buildings and fill the edges
+        List<Edge> edges = new ArrayList<Edge>();
+        for (int[] building : buildings) {
+            Edge leftEdge = new Edge(building[0], building[2], true);
+            edges.add(leftEdge);
+             
+            Edge rightEdge = new Edge(building[1], building[2], false);
+            edges.add(rightEdge);
+        }
+         
+        // Sort the edges according to the left keypoint
+        Collections.sort(edges, new EdgeComparator());
+         
+        // Iterate all sorted edges
+        for (Edge edge : edges) {
+            if (edge.isLeft) {
+                if (pq.isEmpty() || edge.height > pq.peek()) {
+                    result.add(new int[]{edge.x, edge.height});
+                }
+                pq.offer(edge.height);
+            } else {
+                pq.remove(edge.height);
+                if (pq.isEmpty()) {
+                    result.add(new int[]{edge.x, 0});
+                } else if (edge.height > pq.peek()) {
+                    result.add(new int[]{edge.x, pq.peek()});
+                }
+            }
+        }
+         
+        return result;
+    }
+     
+    public class EdgeComparator implements Comparator<Edge> {
+        @Override
+        public int compare(Edge a, Edge b) {
+            if (a.x != b.x) {
+                return a.x - b.x;
+            }
+             
+            if (a.isLeft && b.isLeft) {
+                return b.height - a.height;
+            }
+             
+            if (!a.isLeft && !b.isLeft) {
+                return a.height - b.height;
+            }
+             
+            return a.isLeft ? -1 : 1;
+        }
+    }
+}
+
+Analysis:
+Now let's analyze the time and the space complexity of the solution. Sorting the 2 * N list takes O(nlogn) time. For each of the 2 * n edges, peek() the max takes O(1) time but add and remove takes O(log n) time. So the overall time complexity is O(n * logn). 
+
+An alternative solution:
+Notice that "key points" are either the left or right edges of the buildings. Therefore, we first obtain both the edges of all the N buildings, and store the 2N edges in a sorted array. Maintain a max-heap of building heights while scanning through the edge array: If the current edge is a left edge, then add the height of its associated building to the max-heap; if the edge is a right one, remove the associated height from the heap. Then we take the top value of the heap (yi) as the maximum height at the current edge position (xi). Now (xi, yi) is a potential key point. If yi is the same as the height of the last key point in the result list, it means that this key point is not a REAL key point, but rather a horizontal continuation of the last point, so it should be discarded; otherwise, we add (xi,yi) to the result list because it is a real key point. Repeat this process until all the edges are checked.
+It takes O(NlogN) time to sort the edge array. For each of the 2N edges, it takes O(1) time to query the maximum height but O(logN) time to add or remove elements. Overall, this solution takes O(NlogN) time.
+Code(Java):
+?
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+public class Solution {
+    private class Edge {
+        private int x;
+        private int height;
+        private boolean isLeft;
+         
+        // Constructor
+        public Edge(int x, int height, boolean isLeft) {
+            this.x = x;
+            this.height = height;
+            this.isLeft = isLeft;
+        }
+    }
+     
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<int[]> result = new ArrayList<int[]>();
+         
+        if (buildings == null || buildings.length == 0 || buildings[0].length == 0) {
+            return result;
+        }
+         
+        PriorityQueue<Integer> pq = new PriorityQueue<>(1000, Collections.reverseOrder());
+         
+        // Parse buildings and fill the edges
+        List<Edge> edges = new ArrayList<Edge>();
+        for (int[] building : buildings) {
+            Edge leftEdge = new Edge(building[0], building[2], true);
+            edges.add(leftEdge);
+             
+            Edge rightEdge = new Edge(building[1], building[2], false);
+            edges.add(rightEdge);
+        }
+         
+        // Sort the edges according to the left keypoint
+        Collections.sort(edges, new EdgeComparator());
+         
+        pq.offer(0);
+        int prev = 0;
+         
+        // Iterate all sorted edges
+        for (Edge edge : edges) {
+            if (edge.isLeft) {
+                pq.offer(edge.height);
+            } else {
+                pq.remove(edge.height);
+            }
+             
+            int curr = pq.peek();
+             
+            if (curr != prev) {
+                result.add(new int[]{edge.x, curr});
+                prev = curr;
+            }
+        }
+         
+        return result;
+    }
+     
+    public class EdgeComparator implements Comparator<Edge> {
+        @Override
+        public int compare(Edge a, Edge b) {
+            if (a.x != b.x) {
+                return a.x - b.x;
+            }
+             
+            if (a.isLeft && b.isLeft) {
+                return b.height - a.height;
+            }
+             
+            if (!a.isLeft && !b.isLeft) {
+                return a.height - b.height;
+            }
+             
+            return a.isLeft ? -1 : 1;
+        }
+    }
+}
