@@ -1,0 +1,84 @@
+LeetCode: Range Sum Query - Mutable(2)
+
+struct SegmentTreeNode {
+	int L, R; //left, right index of input array
+	int sum; //sum value between left and right index.
+	SegmentTreeNode *left, *right;
+	SegmentTreeNode(int L, int R) :L(L), R(R), sum(0), left(NULL), right(NULL) {}
+};
+ 
+class SegmentTree {
+	SegmentTreeNode * root;
+	SegmentTreeNode * buildTree(vector<int> &nums, int L, int R) {
+		if (L > R) return NULL;
+		SegmentTreeNode * root = new SegmentTreeNode(L, R);
+		if (L == R)  {root->sum = nums[L];return root;}
+		int mid = (L + R) >> 1;
+		root->left = buildTree(nums, L, mid);
+		root->right = buildTree(nums, mid + 1, R);
+		root->sum = root->left->sum + root->right->sum;//bottom to up.
+		return root;
+	}
+ 
+	void updateUtil(SegmentTreeNode * root, int index, int diff) {
+		if (root && root->L <= index &&  index <= root->R) {
+			root->sum = root->sum+diff;
+			updateUtil(root->left,index, diff);
+			updateUtil(root->right,index,diff);
+		}
+	}
+ 
+	int sumUtil(SegmentTreeNode * root, int L, int R) {
+		if (!root || root->R < L ||  R < root->L ) return 0;
+		if (L <= root->L  && root->R <= R) return root->sum;
+		return sumUtil(root->left, L, R) + sumUtil(root->right, L, R);
+	}
+ 
+public:
+	SegmentTree(vector<int> &nums, int L, int R) 
+	    { 
+	        m_num = nums;
+	        root = buildTree(nums, L, R);
+        }
+ 
+	int sum(int L, int R) {
+		return sumUtil(root, L, R);
+	}
+ 
+	void update(int i,int val) {
+	    int diff = val-m_num[i];
+	    m_num[i] = val;
+		updateUtil(root, i,diff);
+	}
+	private:
+	vector<int> m_num;//keep original copy of input array for updating.
+};
+ 
+
+
+
+class NumArray {
+public:
+    NumArray(vector<int> &nums) {
+        st = new SegmentTree(nums,0,nums.size()-1);
+    }
+
+    void update(int i, int val) {
+        st->update(i,val);
+    }
+
+    int sumRange(int i, int j) {
+        int sum = st->sum(i,j);
+        cout << sum <<endl;
+        return sum;
+    }
+private:
+ SegmentTree *st;
+};
+
+
+// Your NumArray object will be instantiated and called as such:
+// NumArray numArray(nums);
+// numArray.sumRange(0, 1);
+// numArray.update(1, 10);
+// numArray.sumRange(1, 2);
