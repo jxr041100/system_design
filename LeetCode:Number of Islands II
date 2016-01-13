@@ -1,0 +1,77 @@
+LeetCode:Number of Islands II
+Given a n,m which means the row and column of the 2D matrix and an array of pair A( size k). Originally, the 2D matrix is all 0 which means there is only sea in the matrix. The list pair has k operator and each operator has two integer A[i].x, A[i].y means that you can change the grid matrix[A[i].x][A[i].y] from sea to island. Return how many island are there in the matrix after each operator.
+
+Example
+Given n = 3, m = 3, array of pair A = [(0,0),(0,1),(2,2),(2,1)].
+
+return [1,1,2,2].
+
+Note
+0 is represented as the sea, 1 is represented as the island. If two 1 is adjacent, we consider them in the same island. We only consider up/down/left/right adjacent.
+
+Tags Expand 
+
+Union Find
+
+
+ 1 /**
+ 2  * Definition for a point.
+ 3  * struct Point {
+ 4  *     int x;
+ 5  *     int y;
+ 6  *     Point() : x(0), y(0) {}
+ 7  *     Point(int a, int b) : x(a), y(b) {}
+ 8  * };
+ 9  */
+10 class Solution {
+11 public:
+12     /**
+13      * @param n an integer
+14      * @param m an integer
+15      * @param operators an array of point
+16      * @return an integer array
+17      */
+18     int findFather(unordered_map<int, int> &father, int x) {
+19         if (father.find(x) == father.end()) {
+20             father[x] = x;
+21             return x;
+22         }
+23         int res = x, tmp;
+24         while (res != father[res]) {
+25             res = father[res];
+26         }
+27         while (x != father[x]) {
+28             tmp = father[x];
+29             father[x] = res;
+30             x = tmp;
+31         }
+32         return x;
+33     }
+34     vector<int> numIslands2(int n, int m, vector<Point>& operators) {
+35         // Write your code here
+36         unordered_map<int, int> father;
+37         vector<int> res;
+38         int cnt = 0;
+39         const int dx[] = {0, 1, 0, -1};
+40         const int dy[] = {1, 0, -1, 0};
+41         for (auto &op : operators) {
+42             int p = op.x * m + op.y;
+43             int fp = findFather(father, p);
+44             if (fp == p) ++cnt;
+45             for (int i = 0; i < 4; ++i) {
+46                 int xx = op.x + dx[i], yy = op.y + dy[i];
+47                 if (xx < 0 || xx >= n || yy < 0 || yy >= m) continue;
+48                 int q = (op.x + dx[i]) * m + op.y + dy[i];
+49                 if (father.find(q) != father.end()) {
+50                     int fq = findFather(father, q);
+51                     if (fp != fq) {
+52                         --cnt;
+53                         father[fq] = fp;
+54                     }
+55                 }
+56             }
+57             res.push_back(cnt);
+58         }
+59         return res;
+60     }
+61 };
