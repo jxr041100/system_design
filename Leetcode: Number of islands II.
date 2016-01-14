@@ -1,0 +1,74 @@
+Leetcode: Number of islands II
+
+A 2d grid map of m rows and n columns is initially filled with water. We may perform an addLand operation which turns the water at position (row, col) into a land. Given a list of positions to operate, count the number of islands after each addLand operation. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example:
+
+Given m = 3, n = 3, positions = [[0,0], [0,1], [1,2], [2,1]].
+Initially, the 2d grid grid is filled with water. (Assume 0 represents water and 1 represents land).
+
+
+ 1 class UnionFind2D {
+ 2 public:
+ 3     UnionFind2D(int m, int n) {
+ 4         for (int i = 0; i < m * n; i++) ids.push_back(-1);
+ 5         for (int i = 0; i < m * n; i++) szs.push_back(1);
+ 6         M = m, N = n, cnt = 0;
+ 7     }
+ 8     int index(int x, int y) {
+ 9         return x * N + y;
+10     }
+11     int size(void) {
+12         return cnt;
+13     }
+14     int id(int x, int y) {
+15         if (x >= 0 && x < M && y >= 0 && y < N)
+16             return ids[index(x, y)];
+17         return -1;
+18     }
+19     int add(int x, int y) {
+20         int idx = index(x, y);
+21         ids[idx] = idx;
+22         szs[idx] = 1;
+23         cnt++;
+24         return idx;
+25     }
+26     int root(int i) {
+27         for (; i != ids[i]; i = ids[i])
+28             ids[i] = ids[ids[i]];
+29         return i;
+30     }
+31     bool find(int p, int q) {
+32         return root(p) == root(q);
+33     }
+34     void unite(int p, int q) {
+35         int i = root(p), j = root(q);
+36         if (szs[i] > szs[j]) swap(i, j);
+37         ids[i] = j;
+38         szs[j] += szs[i];
+39         cnt--;
+40     }
+41 private:
+42     vector<int> ids, szs;
+43     int M, N, cnt;
+44 };
+45 
+46 class Solution {
+47 public:
+48     vector<int> numIslands2(int m, int n, vector<pair<int, int>>& positions) {
+49         UnionFind2D islands(m, n);
+50         vector<pair<int, int>> dirs = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
+51         vector<int> ans;
+52         for (auto& pos : positions) {
+53             int x = pos.first, y = pos.second;
+54             int p = islands.add(x, y);
+55             for (auto& d : dirs) {
+56                 int q = islands.id(x + d.first, y + d.second);
+57                 if (q >= 0 && !islands.find(p, q))
+58                     islands.unite(p, q);
+59             }
+60             ans.push_back(islands.size());
+61         }
+62         return ans;
+63     }
+64 };
