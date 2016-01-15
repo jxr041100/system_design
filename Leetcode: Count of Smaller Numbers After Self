@@ -1,0 +1,55 @@
+Leetcode: Count of Smaller Numbers After Self
+
+
+class BITree
+{
+private:
+    vector<int> bitree;
+     
+    int lowbit(int x){
+        return x & -x;
+    }
+public:    
+    BITree(int n) { bitree = vector<int>(n+1);}
+   
+    
+    void update(int index, int val, int n){
+        while(index<=n) 
+        {
+            bitree[index]+=val;
+            index+=lowbit(index);
+        }
+    }
+    
+    int sum(int index){
+        int ret = 0;
+        for(int i = index; i > 0; i -= lowbit(i)){
+            ret += bitree[i];
+        }
+        return ret;
+    }
+};
+
+class Solution {
+    public:
+    
+    
+    vector<int> countSmaller(vector<int>& nums) {
+        vector<int> vec = nums;
+        sort(vec.begin(),vec.end());
+        int n = vec.size();
+        unordered_map<int, int> hashmap;
+        for(int i = 1; i <= n; i ++){
+            hashmap[vec[i-1]] = i;
+        }
+        BITree bt(n);
+        vector<int> ret(n);
+        int sz = nums.size();
+        for(int i = sz - 1; i >= 0; i --){
+            ret[i]=bt.sum(hashmap[nums[i]]-1);
+            bt.update(hashmap[nums[i]], 1, n);
+        }
+        return ret;
+    }
+
+};
