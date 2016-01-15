@@ -1,0 +1,101 @@
+Leetcode :Course Schedule II
+
+
+There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, return the ordering of courses you should take to finish all courses.
+
+There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses, return an empty array.
+
+For example:
+
+2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So the correct course order is [0,1]
+
+4, [[1,0],[2,0],[3,1],[3,2]]
+There are a total of 4 courses to take. To take course 3 you should have finished both courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0. So one correct course order is [0,1,2,3]. Another correct ordering is[0,2,1,3].
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+
+
+// Class to represent a graph
+class Graph
+{
+private:
+    int V;    // No. of vertices
+    // Pointer to an array containing adjacency listsList
+    vector<vector<int>> adj;
+    vector<int> result; // the order for vertics being sorted.
+    vector<int>inDegree;
+    int count;
+public:
+    Graph(int _V)// Constructor
+    {
+        V = _V;
+        adj = vector<vector<int>>(V);
+        inDegree = vector<int>(V,0);
+        count = 0;
+    };   
+ 
+    // function to add an edge to graph
+    void addEdge(int v, int w)
+    {
+        adj[w].push_back(v);
+        inDegree[v]++;
+    };
+ 
+    // prints a Topological Sort of the complete graph
+    void topologicalSort()
+    {
+        // find all in_degree==0, and mark them as visited(set inDegree to -1)
+        queue<int> stack;//BFS
+        for(int i=0; i<V; ++i){
+            if(!inDegree[i]){
+                stack.push(i);
+                result.push_back(i);
+                inDegree[i]=-1; // maked as visited
+                count++;
+            }
+        }
+        // pop a node from queue, decrease the degree of the neighbours and push the degree==0    
+        while(!stack.empty()){
+            int cur=stack.front(); 
+            stack.pop();
+            for(int i=0; i<adj[cur].size(); ++i) {
+                inDegree[adj[cur][i]]--;
+                if(inDegree[adj[cur][i]]==0){
+                    count++;
+                    stack.push(adj[cur][i]);
+                    result.push_back(adj[cur][i]);
+                    inDegree[adj[cur][i]]=-1;
+                }
+            }
+        }
+    };
+   
+    vector<int> output()
+    {
+        if(count==V)    return result;
+        else return vector<int>();
+    }
+};
+
+
+
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<pair<int, int>>& prerequisites) {
+        Graph  graph(numCourses);
+        vector<int> result;
+        for(auto it = prerequisites.begin();it!=prerequisites.end();it++ )
+            graph.addEdge((*it).first,(*it).second);
+            
+        graph.topologicalSort(); // sorting
+       
+        result = graph.output();
+        return result;
+    }
+};
