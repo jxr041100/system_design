@@ -1,0 +1,120 @@
+Leetcode:  Minimum Height Trees
+
+ For a undirected graph with tree characteristics, we can choose any node as the root. The result graph is then a rooted tree. Among all possible rooted trees, those with minimum height are called minimum height trees (MHTs). Given such a graph, write a function to find all the MHTs and return a list of their root labels.
+
+Format
+The graph contains n nodes which are labeled from 0 to n - 1. You will be given the number n and a list of undirected edges (each edge is a pair of labels).
+
+You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
+
+Example 1:
+
+Given n = 4, edges = [[1, 0], [1, 2], [1, 3]]
+
+        0
+        |
+        1
+       / \
+      2   3
+
+return [1]
+
+Example 2:
+
+Given n = 6, edges = [[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]
+
+     0  1  2
+      \ | /
+        3
+        |
+        4
+        |
+        5
+
+return [3, 4]
+
+Hint:
+
+    How many MHTs can a graph have at most?
+
+
+
+
+
+
+
+class Graph
+{
+private:
+    int V;    // No. of vertices
+    vector<vector<int>> adj;
+    vector<int> result; // the order for vertics being sorted.
+    vector<int>inDegree;
+public:
+    Graph(int _V)// Constructor
+    {
+        V = _V;
+        adj = vector<vector<int>>(V);
+        inDegree = vector<int>(V,0);
+    };   
+ 
+    // function to add an edge to graph
+    void addEdge(int v, int w)
+    {
+        adj[w].push_back(v);
+        inDegree[v]++;
+        
+        adj[v].push_back(w);
+        inDegree[w]++;
+    };
+ 
+    // prints a Topological Sort of the complete graph
+    void topologicalSort()
+    {
+        // find all in_degree==0, and mark them as visited(set inDegree to -1)
+        vector<int> leaves;//BFS
+        for(int i=0; i<V; ++i){
+            if(inDegree[i]==1){
+                leaves.push_back(i);
+            }
+        }
+        while(V>2)
+        {
+            vector<int>tmp;
+            for(int i = 0;i<leaves.size();i++)
+            {
+                int cur=leaves[i]; 
+                inDegree[cur] = 0;
+                V = V-1;
+                for(int i=0; i<adj[cur].size(); ++i) {
+                    inDegree[adj[cur][i]]--;
+                    if(inDegree[adj[cur][i]]==1)
+                        tmp.push_back(adj[cur][i]);
+                 }
+            }
+            leaves = tmp;
+        }
+        result = leaves;
+    };
+
+    vector<int> output()
+    {
+        return result;
+    }
+};
+
+
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+        
+        if(n==1 && edges.empty()) return vector<int>(1,0);
+        
+        
+        Graph graph(n);
+        for(auto it = edges.begin();it!=edges.end();it++)
+            graph.addEdge((*it).first,(*it).second);
+        graph.topologicalSort();
+        return graph.output();
+    }
+};
