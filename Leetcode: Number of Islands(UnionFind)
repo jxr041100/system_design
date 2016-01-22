@@ -1,0 +1,86 @@
+Leetcode: Number of Islands
+
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water
+
+
+class WeightedUnion2DFind
+{
+public:
+    WeightedUnion2DFind(int m, int n,int cnt)
+    {
+        for(int i = 0;i<m*n;i++) ids.push_back(i);
+        for(int i = 0;i<m*n;i++) szs.push_back(1);
+        count = cnt;
+        M = m;
+        N = n;
+    }
+    int size(){return count++;}
+    
+    // find root id for current node
+    int find(int p)
+    {
+         while(p!=ids[p]) p= ids[p];
+         return p;
+    }
+
+    bool connected(int p,int q)
+    {
+        return find(p) == find(q);
+    }
+    void Union(int p, int q) //replace the sets containing two items by their union.
+    {
+        int rootP = find(p);
+        int rootQ = find(q);
+        if (rootP == rootQ)
+            return;
+        
+        if (szs[rootP] < szs[rootQ]) ids[rootP] = rootQ;
+        else if (szs[rootP] == szs[rootQ]) {
+            ids[rootQ] = rootP;
+            szs[rootP] += 1;
+        } 
+        else 
+            ids[rootQ] = rootP;
+        count--;
+    }
+private:
+      vector<int> ids; // id[i] = parent of i
+      vector<int> szs; // sz[i] = number of objects in subtree rooted at i
+      int M,N,count;
+};
+
+
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int m = grid.size();
+        if(m == 0) return 0;
+        int n = grid[0].size();
+        int count = 0;
+        for(int i = 0;i<m;i++)
+            for(int j = 0;j<n;j++)
+                if(grid[i][j]=='1') count++;
+        WeightedUnion2DFind UF(m,n,count);
+        vector<vector<bool>> visited(m,vector<bool>(n));
+        int direction[4][2]={{-1,0},{1,0},{0,-1},{0,1}};
+        for(int i = 0;i<m;i++)
+            for(int j = 0;j<n;j++)
+            {
+                if(grid[i][j]=='1') 
+                {
+                    
+                    //check all neigboring pixels.
+                    for(int k = 0;k<4;k++)
+                    {
+                        int dx = i+direction[k][0];
+                        int dy = j+direction[k][1];
+                        if(!(dx>=0 && dx<m && dy>=0 && dy<n))continue;
+                        if( grid[dx][dy]=='1')
+                            UF.Union(i*n+j,dx*n+dy);
+                    }
+                }
+            }
+        return UF.size();
+    }
+    
+};
