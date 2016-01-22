@@ -1,0 +1,73 @@
+Leetcode: wordLadder II
+
+Note: does not pass yet. 01.22.2016
+
+class Solution {
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, unordered_set<string> &wordList) {
+
+    unordered_map<string,vector<string>>father;//used to record 
+    unordered_set<string>visited;
+    unordered_set<string> current;
+    unordered_set<string> next;
+    current.insert(beginWord);
+    bool found = false;
+      
+     while(!current.empty() && !found)
+     {
+        for(auto word:current) {visited.insert(word);wordList.erase(word);}
+        for(auto word:current) //loop over all nodes at current level.
+        {
+            string parent(word);
+            for(int j = 0;j<word.size();j++)
+                for(char c ='a';c<='z';c++)
+                {
+                    if(word[j] == c) continue;
+                    swap(c,word[j]);
+                    if((wordList.count(word)>0||word == endWord)&&!visited.count(word))
+                    {
+                        cout << word << endl;
+                        next.insert(word);
+                        father[word].push_back(parent); //save the parents
+                    }
+                    if(word.compare(endWord)==0) found = true;
+                    swap(c,word[j]);
+                }
+        }
+        cout << next.size() << endl;
+        current.clear();
+        swap(current,next);
+     }
+     
+    vector<vector<string>> result;
+    if(found)
+    {
+        vector<string> ans;
+        dfs_findpath(endWord,beginWord,father,ans,result);
+    }
+    
+    return result;
+     }
+     
+    void dfs_findpath(string endWord,string beginWord,unordered_map<string,vector<string>>father,vector<string>&ans,vector<vector<string>> &result)
+    {
+    
+        if(endWord == beginWord)
+        {
+            reverse(ans.begin(),ans.end());
+            result.push_back(ans);
+            reverse(ans.begin(),ans.end());
+            return;
+        }
+        vector<string> parents = father[endWord];
+        for(auto it = parents.begin();it!=parents.end();it++)
+        {
+            ans.push_back(*it);
+            dfs_findpath(*it,beginWord,father,ans,result);
+            ans.pop_back();
+        }
+    }
+};
+
+
+
