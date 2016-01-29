@@ -22,54 +22,6 @@ The question itself is very easy to solve. Just several corner cases need to thi
   -- What if the 2d vector itself is empty? Again, handle it in hasNext() 
 
 Code (Java):
-?
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
 public class Vector2D {
      
     private List<List<Integer>> vec2d;
@@ -123,41 +75,6 @@ Followup:
 As an added challenge, try to code it using only iterators in C++ or iterators in Java.
 
 Code (Java):
-?
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
 public class Vector2D {
     private Iterator<List<Integer>>outerIterator;
     private Iterator<Integer> innerIterator;
@@ -200,40 +117,6 @@ There are multiple corner cases need to handle:
 
 
 Update on 11/18/15:
-?
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
 public class Vector2D {
     private Iterator<List<Integer>> outer;
     private Iterator<Integer> inner;
