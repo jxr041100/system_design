@@ -1,0 +1,50 @@
+Leetcode: Constant Time Random Picker
+设计一个数据结构，支持O(1)时间的查询，增加，删除，和得到其中随机元素的操作，可以认为其中的元素是数字。
+哈希表数组
+复杂度
+      时间 O(1) 空间 O(N)
+思路
+要求O(1)时间查询和删除，则想到哈希表，其他的数据结构都要遍历一遍才行。
+但是getRandom这功能有要求我们必须保持内容的有序，这样我们才能通过随机数的方法得到随机的某个元素。
+这里我们可以用数组、链表或者树保持有序，但是链表得到第n个元素要O(N)的时间，而树也要logN时间，
+所以不适合，只有数组。用数组的技巧在于，数组只是保持一个顺序，我们可以哈希表表示一个元素和其在数组中
+下标的映射关系，保证我们的O(1)查询。而对于删除，我们需要维护一个length变量（用表的大小也行）
+，然后每次删除的时候把要删的数和数组当前标记的“最后”一个元素交换，然后把大小减一，
+并更新哈希表。取得随机数的话，则是在当前数组有效范围内取随机数就行了。
+
+public class RandomPicker {
+    Random r;
+    ArrayList<Integer> arr;
+    HashMap<Integer, Integer> map;
+    int length;
+    
+    public RandomPicker(){
+        this.r = new Random();
+        this.arr = new ArrayList<>();
+        this.map = new HashMap<>();
+        this.length = 0;
+    }
+    
+    public void add(int key){
+        arr.add(length, key);
+        map.put(key, length);
+        length++;
+    }
+    
+    public void delete(int key){
+        // 将要删的数和最后一个交换
+        int idx = map.get(key);
+        int tmp = arr.get(length - 1);
+        arr.set(length - 1, key);
+        arr.set(idx, tmp);
+        // 更新元素和下标的对应关系
+        map.put(tmp, idx);
+        length--;
+    }
+    
+    public int getRandom(){
+        return arr.get(r.nextInt(length));
+    }
+}
+
+
